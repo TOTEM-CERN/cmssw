@@ -56,9 +56,9 @@ doEffFromHitPatternVsBX             ['generalTracks'] = cms.bool(True)
 doStopSource                        ['generalTracks'] = cms.bool(True)
 
 trackSelector = cms.EDFilter('TrackSelector',
-    src = cms.InputTag('generalTracks'),
-    cut = cms.string("")
-)
+                             src = cms.InputTag('generalTracks'),
+                             cut = cms.string("")
+                             )
 
 ### highpurity definition: https://cmssdt.cern.ch/SDT/lxr/source/RecoTracker/FinalTrackSelectors/python/selectHighPurity_cfi.py
 highPurityPtRange0to1 = trackSelector.clone()
@@ -94,7 +94,7 @@ doStopSource                        ['highPurityPtRange0to1'] = cms.bool(True)
 highPurityPtRange1to10 = trackSelector.clone()
 highPurityPtRange1to10.cut = cms.string("quality('highPurity') & pt >= 1 & pt < 10 ")
 
-sequenceName    ['highPurityPtRange1to10'] = highPurityPtRange1to10 
+sequenceName    ['highPurityPtRange1to10'] = highPurityPtRange1to10
 mainfolderName  ['highPurityPtRange1to10'] = 'Tracking/TrackParameters/highPurityTracks/pt_1to10'
 vertexfolderName['highPurityPtRange1to10'] = 'Tracking/PrimaryVertices/highPurityTracks/pt_1to10'
 trackPtN        ['highPurityPtRange1to10'] = cms.int32(10)
@@ -123,7 +123,7 @@ doStopSource                        ['highPurityPtRange1to10'] = cms.bool(True)
 highPurityPt10 = trackSelector.clone()
 highPurityPt10.cut = cms.string("quality('highPurity') & pt >= 10")
 
-sequenceName    ['highPurityPt10'] = highPurityPt10 
+sequenceName    ['highPurityPt10'] = highPurityPt10
 mainfolderName  ['highPurityPt10'] = 'Tracking/TrackParameters/highPurityTracks/pt_10'
 vertexfolderName['highPurityPt10'] = 'Tracking/PrimaryVertices/highPurityTracks/pt_10'
 trackPtN        ['highPurityPt10'] = cms.int32(100)
@@ -212,7 +212,7 @@ trackAssociated2pvSelector.trackWithVertexSelectorParams = cms.PSet(
    vtxFallback  = cms.bool(True), ## falback to beam spot if there are no vertices
    # uses vtx=(0,0,0) with deltaZeta=15.9, deltaRho = 0.2
    zetaVtx        = cms.double(0.1),
-#   rhoVtx         = cms.double(0.2), ## tags used by b-tagging folks
+   #   rhoVtx         = cms.double(0.2), ## tags used by b-tagging folks
    rhoVtx         = cms.double(999.), ## tags used by b-tagging folks
    nSigmaDtVertex = cms.double(0),
    # should _not_ be used for the TrackWithVertexRefSelector

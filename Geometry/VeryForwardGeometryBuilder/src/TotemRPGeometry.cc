@@ -29,13 +29,14 @@ char TotemRPGeometry::Build(const DetGeomDesc *gD)
 
     // check if it is RP detector
     if (! d->name().name().compare(DDD_TOTEM_RP_DETECTOR_NAME)
-       or d->name().name().compare(DDD_CTPPS_DIAMONDS_DETECTOR_NAME)==0)
+        || d->name().name().compare(DDD_CTPPS_DIAMONDS_DETECTOR_NAME)==0
+        || d->name().name().compare(DDD_CTPPS_UFSD_DETECTOR_NAME)==0)
       AddDetector(d->geographicalID(), d);
 
     // check if it is RP device (primary vacuum)
     if (! d->name().name().compare(DDD_TOTEM_RP_PRIMARY_VACUUM_NAME))
       AddRPDevice(d->geographicalID(), d);
-    
+
     for (unsigned int i = 0; i < d->components().size(); i++)
       buffer.push_back(d->components()[i]);
   }
@@ -70,7 +71,7 @@ const DetGeomDesc* TotemRPGeometry::GetDetector(unsigned int id) const
   mapType::const_iterator it = theMap.find(id);
   if (it == theMap.end())
     throw cms::Exception("TotemRPGeometry") << "Not found detector with ID " << id << ", i.e. "
-      << CTPPSDetId(id);
+                                            << CTPPSDetId(id);
 
   // the [] operator cannot be used as this method is const
   // and it must be const and one gets TotemRPGeometry const
@@ -83,17 +84,17 @@ const DetGeomDesc* TotemRPGeometry::GetDetector(unsigned int id) const
 
 CLHEP::Hep3Vector TotemRPGeometry::GetDetEdgePosition(unsigned int id) const
 {
-	// hardcoded for now, values taken from RP_Hybrid.xml
-	// +-------+
-	// |       |
-	// |   + (0,0)
-	//  *(x,y) |
-	//   \-----+
-	// x=-RP_Det_Size_a/2+RP_Det_Edge_Length/(2*sqrt(2))
-	// y=x
-	// ideally we would get this from the geometry in the event setup
-	double x=-36.07/2+22.276/(2*sqrt(2));
-	return LocalToGlobal(id, CLHEP::Hep3Vector(x, x, 0.));
+  // hardcoded for now, values taken from RP_Hybrid.xml
+  // +-------+
+  // |       |
+  // |   + (0,0)
+  //  *(x,y) |
+  //   \-----+
+  // x=-RP_Det_Size_a/2+RP_Det_Edge_Length/(2*sqrt(2))
+  // y=x
+  // ideally we would get this from the geometry in the event setup
+  double x=-36.07/2+22.276/(2*sqrt(2));
+  return LocalToGlobal(id, CLHEP::Hep3Vector(x, x, 0.));
 }
 
 // Left edge: -18.0325, -2.2209 ; Right edge: -2.2209, -18.0325
@@ -102,7 +103,7 @@ CLHEP::Hep3Vector TotemRPGeometry::GetDetEdgePosition(unsigned int id) const
 
 CLHEP::Hep3Vector TotemRPGeometry::GetDetEdgeNormalVector(unsigned int id) const
 {
-	return GetDetector(id)->rotation() * CLHEP::Hep3Vector(-sqrt(2)/2, -sqrt(2)/2, 0.);
+  return GetDetector(id)->rotation() * CLHEP::Hep3Vector(-sqrt(2)/2, -sqrt(2)/2, 0.);
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -126,7 +127,7 @@ const DetGeomDesc* TotemRPGeometry::GetRPDevice(unsigned int id) const
   RPDeviceMapType::const_iterator it = theRomanPotMap.find(id);
   if (it == theRomanPotMap.end())
     throw cms::Exception("TotemRPGeometry") << "Not found RP device with ID " << id << ", i.e. "
-      << TotemRPDetId(id);
+                                            << TotemRPDetId(id);
 
   return (*it).second;
 }
@@ -135,16 +136,16 @@ const DetGeomDesc* TotemRPGeometry::GetRPDevice(unsigned int id) const
 
 CLHEP::Hep3Vector TotemRPGeometry::GetRPThinFoilPosition(int copy_no) const
 {
-	// hardcoded for now, taken from RP_Box.xml:RP_Box_primary_vacuum_y
-	// ideally we would get this from the geometry in the event setup
-	return LocalToGlobal(GetRPDevice(copy_no), CLHEP::Hep3Vector(0., -135.65/2.0, 0.));
+  // hardcoded for now, taken from RP_Box.xml:RP_Box_primary_vacuum_y
+  // ideally we would get this from the geometry in the event setup
+  return LocalToGlobal(GetRPDevice(copy_no), CLHEP::Hep3Vector(0., -135.65/2.0, 0.));
 }
 
 //----------------------------------------------------------------------------------------------------
 
 CLHEP::Hep3Vector TotemRPGeometry::GetRPThinFoilNormalVector(int copy_no) const
 {
-	return GetRPDevice(copy_no)->rotation() * CLHEP::Hep3Vector(0., -1., 0.);
+  return GetRPDevice(copy_no)->rotation() * CLHEP::Hep3Vector(0., -1., 0.);
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -302,4 +303,3 @@ CLHEP::HepRotation TotemRPGeometry::GetRPGlobalRotation(int copy_no) const
   CLHEP::HepRotation rot(rot_mat);
   return rot;
 }
-

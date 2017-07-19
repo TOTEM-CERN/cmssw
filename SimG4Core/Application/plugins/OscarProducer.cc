@@ -84,10 +84,12 @@ OscarProducer::OscarProducer(edm::ParameterSet const & p)
   produces<edm::PSimHitContainer>("TrackerHitsTOBHighTof");
   produces<edm::PSimHitContainer>("TrackerHitsTECLowTof");
   produces<edm::PSimHitContainer>("TrackerHitsTECHighTof");
-    
+
   produces<edm::PSimHitContainer>("TotemHitsT1");
   produces<edm::PSimHitContainer>("TotemHitsT2Gem");
   produces<edm::PSimHitContainer>("TotemHitsRP");
+  produces<edm::PSimHitContainer>("CTPPSHitsDiamond");
+  produces<edm::PSimHitContainer>("CTPPSHitsUFSD");
   produces<edm::PSimHitContainer>("FP420SI");
   produces<edm::PSimHitContainer>("BSCHits");
   produces<edm::PSimHitContainer>("PLTHits");
@@ -117,11 +119,11 @@ OscarProducer::OscarProducer(edm::ParameterSet const & p)
   produces<edm::PCaloHitContainer>("CastorTU");
   produces<edm::PCaloHitContainer>("EcalTBH4BeamHits");
   produces<edm::PCaloHitContainer>("HcalTB06BeamHits");
-  produces<edm::PCaloHitContainer>("ZDCHITS"); 
-  produces<edm::PCaloHitContainer>("ChamberHits"); 
-  produces<edm::PCaloHitContainer>("FibreHits"); 
-  produces<edm::PCaloHitContainer>("WedgeHits"); 
-    
+  produces<edm::PCaloHitContainer>("ZDCHITS");
+  produces<edm::PCaloHitContainer>("ChamberHits");
+  produces<edm::PCaloHitContainer>("FibreHits");
+  produces<edm::PCaloHitContainer>("WedgeHits");
+
   //register any products 
   m_producers = m_runManager->producers();
 
@@ -135,10 +137,10 @@ OscarProducer::OscarProducer(edm::ParameterSet const & p)
   m_UIsession.reset(new CustomUIsession());
 }
 
-OscarProducer::~OscarProducer() 
+OscarProducer::~OscarProducer()
 { }
 
-void 
+void
 OscarProducer::beginRun(const edm::Run&, const edm::EventSetup & es)
 {
   // Random number generation not allowed here
@@ -146,7 +148,7 @@ OscarProducer::beginRun(const edm::Run&, const edm::EventSetup & es)
   m_runManager->initG4(es);
 }
 
-void 
+void
 OscarProducer::endRun(const edm::Run&, const edm::EventSetup&)
 {
   m_runManager->stopG4();
@@ -156,82 +158,82 @@ void OscarProducer::produce(edm::Event & e, const edm::EventSetup & es)
 {
   StaticRandomEngineSetUnset random(e.streamID());
 
-  std::vector<SensitiveTkDetector*>& sTk = 
-    m_runManager->sensTkDetectors();
+  std::vector<SensitiveTkDetector*>& sTk =
+          m_runManager->sensTkDetectors();
   std::vector<SensitiveCaloDetector*>& sCalo =
-    m_runManager->sensCaloDetectors();
+          m_runManager->sensCaloDetectors();
 
   try {
 
     m_runManager->produce(e, es);
 
     std::unique_ptr<edm::SimTrackContainer>
-      p1(new edm::SimTrackContainer);
+            p1(new edm::SimTrackContainer);
     std::unique_ptr<edm::SimVertexContainer>
-      p2(new edm::SimVertexContainer);
+            p2(new edm::SimVertexContainer);
     G4SimEvent * evt = m_runManager->simEvent();
     evt->load(*p1);
-    evt->load(*p2);   
+    evt->load(*p2);
 
     e.put(std::move(p1));
     e.put(std::move(p2));
 
-    for (std::vector<SensitiveTkDetector*>::iterator it = sTk.begin(); 
-	 it != sTk.end(); ++it) {
+    for (std::vector<SensitiveTkDetector*>::iterator it = sTk.begin();
+         it != sTk.end(); ++it) {
 
       std::vector<std::string> v = (*it)->getNames();
-      for (std::vector<std::string>::iterator in = v.begin(); 
-	   in!= v.end(); ++in) {
+      for (std::vector<std::string>::iterator in = v.begin();
+           in!= v.end(); ++in) {
 
-	std::unique_ptr<edm::PSimHitContainer>
-	  product(new edm::PSimHitContainer);
-	(*it)->fillHits(*product,*in);
-	e.put(std::move(product),*in);
+        std::unique_ptr<edm::PSimHitContainer>
+                product(new edm::PSimHitContainer);
+        (*it)->fillHits(*product,*in);
+        e.put(std::move(product),*in);
       }
     }
-    for (std::vector<SensitiveCaloDetector*>::iterator it = sCalo.begin(); 
-	 it != sCalo.end(); ++it) {
+    for (std::vector<SensitiveCaloDetector*>::iterator it = sCalo.begin();
+         it != sCalo.end(); ++it) {
 
       std::vector<std::string>  v = (*it)->getNames();
 
-      for (std::vector<std::string>::iterator in = v.begin(); 
-	   in!= v.end(); in++) {
+      for (std::vector<std::string>::iterator in = v.begin();
+           in!= v.end(); in++) {
 
-	std::unique_ptr<edm::PCaloHitContainer>
-	  product(new edm::PCaloHitContainer);
-	(*it)->fillHits(*product,*in);
-	e.put(std::move(product),*in);
+        std::unique_ptr<edm::PCaloHitContainer>
+                product(new edm::PCaloHitContainer);
+        (*it)->fillHits(*product,*in);
+        e.put(std::move(product),*in);
       }
     }
 
     for(Producers::iterator itProd = m_producers.begin();
-	itProd != m_producers.end(); ++itProd) {
+        itProd != m_producers.end(); ++itProd) {
 
       (*itProd)->produce(e,es);
     }
 
   } catch ( const SimG4Exception& simg4ex ) {
-       
-    edm::LogInfo("SimG4CoreApplication") << "SimG4Exception caght! " 
-					 << simg4ex.what();
+
+    edm::LogInfo("SimG4CoreApplication") << "SimG4Exception caght! "
+                                         << simg4ex.what();
     m_runManager->stopG4();
-       
-    throw edm::Exception( edm::errors::EventCorruption ) 
-      << "SimG4CoreApplication exception in generation of event "
-      << e.id() << " in stream " << e.streamID() << " \n"
-      << simg4ex.what();
+
+    throw edm::Exception( edm::errors::EventCorruption )
+            << "SimG4CoreApplication exception in generation of event "
+            << e.id() << " in stream " << e.streamID() << " \n"
+            << simg4ex.what();
   }
 }
 
 StaticRandomEngineSetUnset::StaticRandomEngineSetUnset(
-      edm::StreamID const& streamID)
+        edm::StreamID const& streamID)
 {
   edm::Service<edm::RandomNumberGenerator> rng;
   if ( ! rng.isAvailable()) {
     throw cms::Exception("Configuration")
-      << "The OscarProducer module requires the RandomNumberGeneratorService\n"
-      "which is not present in the configuration file.  You must add the service\n"
-      "in the configuration file if you want to run OscarProducer";
+            << "The OscarProducer module requires the RandomNumberGeneratorService\n"
+                    "which is not present in the configuration file.  You must add the service\n"
+                    "in the configuration file if you want to run OscarProducer";
   }
   m_currentEngine = &(rng->getEngine(streamID));
 
@@ -244,14 +246,14 @@ StaticRandomEngineSetUnset::StaticRandomEngineSetUnset(
 }
 
 StaticRandomEngineSetUnset::StaticRandomEngineSetUnset(
-      CLHEP::HepRandomEngine * engine) 
+        CLHEP::HepRandomEngine * engine)
 {
   m_currentEngine = engine;
   m_previousEngine = G4Random::getTheEngine();
   G4Random::setTheEngine(m_currentEngine);
 }
 
-StaticRandomEngineSetUnset::~StaticRandomEngineSetUnset() 
+StaticRandomEngineSetUnset::~StaticRandomEngineSetUnset()
 {
   G4Random::setTheEngine(m_previousEngine);
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
 *
 * Authors:
-*	Jan Kaspar (jan.kaspar@gmail.com) 
+*	Jan Kaspar (jan.kaspar@gmail.com)
 *
 ****************************************************************************/
 
@@ -23,12 +23,12 @@ class DDFilteredView;
  **/
 
 class DDDTotemRPContruction {
-	public:
-		DDDTotemRPContruction();
-		const DetGeomDesc* construct(const DDCompactView* cpv);
+public:
+    DDDTotemRPContruction();
+    const DetGeomDesc* construct(const DDCompactView* cpv);
 
-	protected:
-		void buildDetGeomDesc(DDFilteredView *fv, DetGeomDesc *gd);
+protected:
+    void buildDetGeomDesc(DDFilteredView *fv, DetGeomDesc *gd);
 };
 
 #endif // Geometry_VeryForwardGeometryBuilder_DDDTotemRPConstruction

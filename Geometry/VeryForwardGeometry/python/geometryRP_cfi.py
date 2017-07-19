@@ -2,17 +2,17 @@ import FWCore.ParameterSet.Config as cms
 
 # DDL geometry (ideal)
 totemGeomXMLFiles = cms.vstring(
-        'Geometry/CMSCommonData/data/materials.xml', 
-        'Geometry/CMSCommonData/data/rotations.xml', 
-        'Geometry/CMSCommonData/data/normal/cmsextent.xml', 
-        'Geometry/CMSCommonData/data/cms.xml', 
-        'Geometry/CMSCommonData/data/cmsMother.xml', 
-        'Geometry/ForwardCommonData/data/forward.xml', 
-        'Geometry/ForwardCommonData/data/totemRotations.xml', 
-        'Geometry/ForwardCommonData/data/totemMaterials.xml', 
-        'Geometry/ForwardCommonData/data/totemt1.xml', 
-        'Geometry/ForwardCommonData/data/totemt2.xml', 
-        'Geometry/ForwardCommonData/data/ionpump.xml', 
+        'Geometry/CMSCommonData/data/materials.xml',
+        'Geometry/CMSCommonData/data/rotations.xml',
+        'Geometry/CMSCommonData/data/normal/cmsextent.xml',
+        'Geometry/CMSCommonData/data/cms.xml',
+        'Geometry/CMSCommonData/data/cmsMother.xml',
+        'Geometry/ForwardCommonData/data/forward.xml',
+        'Geometry/ForwardCommonData/data/totemRotations.xml',
+        'Geometry/ForwardCommonData/data/totemMaterials.xml',
+        'Geometry/ForwardCommonData/data/totemt1.xml',
+        'Geometry/ForwardCommonData/data/totemt2.xml',
+        'Geometry/ForwardCommonData/data/ionpump.xml',
         'Geometry/VeryForwardData/data/RP_Box.xml',
         'Geometry/VeryForwardData/data/RP_Box/RP_Box_000.xml',
         'Geometry/VeryForwardData/data/RP_Box/RP_Box_001.xml',
@@ -104,19 +104,29 @@ ctppsDiamondGeomXMLFiles = cms.vstring(
         'Geometry/VeryForwardData/data/CTPPS_Diamond_Planes/CTPPS_Diamond_Plane1.xml',
         'Geometry/VeryForwardData/data/CTPPS_Diamond_Planes/CTPPS_Diamond_Plane2.xml',
         'Geometry/VeryForwardData/data/CTPPS_Diamond_Planes/CTPPS_Diamond_Plane3.xml',
-        'Geometry/VeryForwardData/data/CTPPS_Diamond_Planes/CTPPS_Diamond_Plane4.xml',
+        #'Geometry/VeryForwardData/data/CTPPS_Diamond_Planes/CTPPS_Diamond_Plane4.xml',
         'Geometry/VeryForwardData/data/CTPPS_Diamond_Detector_Assembly.xml',
 )
 
-XMLIdealGeometryESSource_CTPPS = cms.ESSource("XMLIdealGeometryESSource",
-    geomXMLFiles = totemGeomXMLFiles+ctppsDiamondGeomXMLFiles,
-    rootNodeName = cms.string('cms:CMSE')
+ctppsUFSDGeomXMLFiles = cms.vstring(
+        # UFSDetectors
+        'Geometry/VeryForwardData/data/CTPPS_UFSD_Segments/CTPPS_UFSD_Pattern1.xml',
+        'Geometry/VeryForwardData/data/CTPPS_UFSD_Segments/CTPPS_UFSD_Pattern2_SegmentA.xml',
+        'Geometry/VeryForwardData/data/CTPPS_UFSD_Segments/CTPPS_UFSD_Pattern2_SegmentB.xml',
+        'Geometry/VeryForwardData/data/CTPPS_UFSD_Planes/CTPPS_UFSD_Plane4.xml',
+        'Geometry/VeryForwardData/data/CTPPS_UFSD_Parameters.xml',
+        #'Geometry/VeryForwardData/data/CTPPS_UFSD_Detector_Assembly.xml',
 )
+
+XMLIdealGeometryESSource_CTPPS = cms.ESSource("XMLIdealGeometryESSource",
+                                              geomXMLFiles = totemGeomXMLFiles+ctppsDiamondGeomXMLFiles+ctppsUFSDGeomXMLFiles,
+                                              rootNodeName = cms.string('cms:CMSE')
+                                              )
 
 # position of RPs
 XMLIdealGeometryESSource_CTPPS.geomXMLFiles.append("Geometry/VeryForwardData/data/2016_ctpps_15sigma_margin0/RP_Dist_Beam_Cent.xml")
 
 # extended geometries
 TotemRPGeometryESModule = cms.ESProducer("TotemRPGeometryESModule",
-    verbosity = cms.untracked.uint32(1)
-)
+                                         verbosity = cms.untracked.uint32(1)
+                                         )
