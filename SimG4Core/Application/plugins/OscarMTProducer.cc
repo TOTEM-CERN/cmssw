@@ -86,6 +86,7 @@ OscarMTProducer::OscarMTProducer(edm::ParameterSet const & p, const OscarMTMaste
   produces<edm::PSimHitContainer>("TotemHitsT1");
   produces<edm::PSimHitContainer>("TotemHitsT2Gem");
   produces<edm::PSimHitContainer>("TotemHitsRP");
+  produces<edm::PSimHitContainer>("CTPPSPixelHits");
   produces<edm::PSimHitContainer>("CTPPSHitsDiamond");
   produces<edm::PSimHitContainer>("CTPPSHitsUFSD");
   produces<edm::PSimHitContainer>("FP420SI");

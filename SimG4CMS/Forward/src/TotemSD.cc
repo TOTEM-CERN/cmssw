@@ -95,6 +95,8 @@ TotemSD::TotemSD(std::string name, const DDCompactView & cpv,
     numberingScheme = dynamic_cast<TotemVDetectorOrganization*>(new TotemT2NumberingSchemeGem(4));
   } else if (name == "TotemHitsRP") {
     numberingScheme = dynamic_cast<TotemVDetectorOrganization*>(new TotemRPNumberingScheme(3));
+  } else if (name == "CTPPSPixelHits") {
+    numberingScheme = dynamic_cast<TotemVDetectorOrganization*>(new TotemRPNumberingScheme(3));
   } else if (name == "CTPPSHitsDiamond") {
     numberingScheme = dynamic_cast<TotemVDetectorOrganization*>(new TotemRPNumberingScheme(3));
   } else if (name == "CTPPSHitsUFSD") {
@@ -258,10 +260,13 @@ void TotemSD::GetStepInfo(G4Step* aStep)
   hitPoint = preStepPoint->GetPosition();
   exitPoint = postStepPoint->GetPosition();
   currentPV = preStepPoint->GetPhysicalVolume();
-  theLocalEntryPoint = (hitPoint);
+
+  // WARNING: changed temporarily to global coordinates to facilitate validation.
+  // This might brak the reconstruction!
 //  theLocalEntryPoint = SetToLocal(hitPoint);
-  theLocalExitPoint = (exitPoint);
 //  theLocalExitPoint = SetToLocal(exitPoint);
+  theLocalEntryPoint = (hitPoint);
+  theLocalExitPoint = (exitPoint);
 
   G4String name = currentPV->GetName();
   name.assign(name,0,4);

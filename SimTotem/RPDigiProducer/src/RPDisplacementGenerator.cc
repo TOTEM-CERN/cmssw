@@ -5,7 +5,7 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "Geometry/Records/interface/VeryForwardMisalignedGeometryRecord.h"
 #include "Geometry/Records/interface/VeryForwardRealGeometryRecord.h"
-#include "Geometry/VeryForwardGeometryBuilder/interface/TotemRPGeometry.h"
+#include "Geometry/VeryForwardGeometryBuilder/interface/CTPPSGeometry.h"
 #include "DataFormats/CTPPSAlignment/interface/RPAlignmentCorrectionsData.h"
 #include <Math/RotationZYX.h>
 #include <Math/Rotation3D.h>
@@ -34,16 +34,16 @@ RPDisplacementGenerator::RPDisplacementGenerator(const edm::ParameterSet &ps, RP
   RotationMatrix R_m;
 
   if (alignments.isValid()) {
-    const RPAlignmentCorrectionData& ac = alignments->GetFullSensorCorrection(decId);
+    const RPAlignmentCorrectionData& ac = alignments->getFullSensorCorrection(decId);
     S_m = ac.getTranslation();
     R_m = ac.getRotationMatrix();
   } else
     isOn = false;
 
   // transform shift and rotation to the local coordinate frame
-  ESHandle<TotemRPGeometry> geom;
+  ESHandle<CTPPSGeometry> geom;
   iSetup.get<VeryForwardRealGeometryRecord>().get(geom);
-  const DetGeomDesc *g = geom->GetDetector(detId);
+  const DetGeomDesc *g = geom->getSensor(detId);
 
   //const DDTranslation& S_l = g->translation();
   const DDRotationMatrix& R_l = g->rotation();

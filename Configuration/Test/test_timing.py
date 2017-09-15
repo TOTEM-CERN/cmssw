@@ -38,7 +38,7 @@ process = cms.Process("TestFlatGun")
 
 # Specify the maximum events to simulate
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(2000)
+    input = cms.untracked.int32(200)
 )
 
 # Configure the output module (save the result in a file)
@@ -137,8 +137,7 @@ BeamProtTransportSetup = cms.PSet(
 totemGeomXMLFiles = cms.vstring(
     'Geometry/CMSCommonData/data/materials.xml',
     'Geometry/CMSCommonData/data/rotations.xml',
-    # 'Geometry/CMSCommonData/data/extend/cmsextent.xml',
-    'Configuration/Test/cmsextent.xml',
+    'Geometry/CMSCommonData/data/extend/cmsextent.xml',
     'Geometry/CMSCommonData/data/cms.xml',
     'Geometry/CMSCommonData/data/beampipe/2015/v1/beampipe.xml',
     'Geometry/CMSCommonData/data/cmsBeam.xml',
@@ -266,8 +265,9 @@ process.XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/d
 process.XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/data/2016_ctpps_15sigma_margin0/RP_Dist_Beam_Cent.xml")
 
 # extended geometries
-process.TotemRPGeometryESModule = cms.ESProducer("TotemRPGeometryESModule",
-                                                 verbosity = cms.untracked.uint32(1)
+process.ctppsGeometryESModule = cms.ESProducer("CTPPSGeometryESModule",
+                                                 verbosity = cms.untracked.uint32(1),
+                                               compactViewTag = cms.string('XMLIdealGeometryESSource_CTPPS')
                                                  )
 
 
