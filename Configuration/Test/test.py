@@ -1,8 +1,16 @@
 from SimG4Core.Application.hectorParameter_cfi import *
 import FWCore.ParameterSet.Config as cms
 import copy
+
+#
+# 09.08.17 patrykel
+# used to test new optics in 8_1_0
+#
+
+
 process = cms.Process("TestFlatGun")
-process.MessageLogger = cms.Service("MessageLogger",
+
+'''process.MessageLogger = cms.Service("MessageLogger",
     destinations = cms.untracked.vstring('warnings',
         'errors',
         'infos',
@@ -34,17 +42,17 @@ process.MessageLogger = cms.Service("MessageLogger",
             limit = cms.untracked.int32(1000000)
         )
     )
-)
+)'''
 
 # Specify the maximum events to simulate
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(20)
+    input = cms.untracked.int32(1000)
 )
 
 # Configure the output module (save the result in a file)
 process.o1 = cms.OutputModule("PoolOutputModule",
     outputCommands = cms.untracked.vstring('keep *'),
-    fileName = cms.untracked.string('file:test.root')
+    fileName = cms.untracked.string('file:test_1k.root')
 )
 process.outpath = cms.EndPath(process.o1)
 
@@ -108,12 +116,12 @@ process.BeamOpticsParamsESSource = cms.ESSource("BeamOpticsParamsESSource",
 process.ProtonTransportFunctionsESSource = cms.ESProducer("ProtonTransportFunctionsESSource",
     opticsFile = cms.string(''), # automatic
     maySymmetrize = cms.bool(True), # this optic is assymmetric
-    verbosity = cms.untracked.uint32(10)
+    verbosity = cms.untracked.uint32(0)
 )
 
 BeamProtTransportSetup = cms.PSet(
-    Verbosity = cms.bool(True),
-    ModelRootFile = cms.string('Geometry/VeryForwardProtonTransport/data/parametrization_6500GeV_90_transp_75.root'),
+    Verbosity = cms.bool(False),
+    ModelRootFile = cms.string('Geometry/VeryForwardProtonTransport/data/parametrization_6500GeV_0p4_185_reco_beam1.root'),
     Model_IP_150_R_Name = cms.string('ip5_to_beg_150_station_lhcb1'),
     Model_IP_150_L_Name = cms.string('ip5_to_beg_150_station_lhcb1'),
 
@@ -223,7 +231,7 @@ process.XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/d
 
 # extended geometries
 process.TotemRPGeometryESModule = cms.ESProducer("TotemRPGeometryESModule",
-    verbosity = cms.untracked.uint32(10)
+    verbosity = cms.untracked.uint32(0)
 )
 
 
@@ -248,13 +256,13 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("SimG4Core.Application.g4SimHits_cfi")
 process.g4SimHits.Physics.BeamProtTransportSetup = BeamProtTransportSetup
 #process.g4SimHits.Generator.HepMCProductLabel = 'generator'    # The input source for G4 module is connected to "process.source".
-process.g4SimHits.G4TrackingManagerVerbosity = cms.untracked.int32(10)
+process.g4SimHits.G4TrackingManagerVerbosity = cms.untracked.int32(0)
 process.g4SimHits.OverrideUserStackingAction = cms.bool(True)   # HINT: TOTEM specific
 process.g4SimHits.TransportParticlesThroughWholeBeampipe = cms.bool(True)
 # TOTEM uses MeasuredGeometryRecord instead of IdealGeometryRecord
 process.g4SimHits.UseMeasuredGeometryRecord = cms.untracked.bool(False)  # HINT: TOTEM specific
-process.g4SimHits.SteppingVerbosity = cms.int32(5)
-process.g4SimHits.G4EventManagerVerbosity = cms.untracked.int32(10)
+process.g4SimHits.SteppingVerbosity = cms.int32(0)
+process.g4SimHits.G4EventManagerVerbosity = cms.untracked.int32(0)
 process.g4SimHits.G4StackManagerVerbosity = cms.untracked.int32(0)
 process.g4SimHits.Watchers = cms.VPSet(
 #        cms.PSet( # HINT: TOTEM specific
@@ -310,7 +318,7 @@ process.g4SimHits.PPS_Timing_SD = cms.PSet(
 process.load("SimGeneral.HepPDTESSource.pdt_cfi")
 #
 process.g4SimHits.PPSSD = cms.PSet(
-  Verbosity = cms.untracked.int32(10)
+  Verbosity = cms.untracked.int32(0)
 )
 #
 # ################## Step 3 - Magnetic field configuration
@@ -465,41 +473,13 @@ process.mix = cms.EDProducer("MixingModule",
 
 #from SimGeneral/MixingModule/python/mix_Objects_cfi.py
 process.mix.mixObjects.mixSH.input =  cms.VInputTag(  # note that this list needs to be in the same order as the subdets
-        #cms.InputTag("g4SimHits","BSCHits"), cms.InputTag("g4SimHits","BCM1FHits"), cms.InputTag("g4SimHits","PLTHits"), cms.InputTag("g4SimHits","FP420SI"),
-        cms.InputTag("g4SimHits","MuonCSCHits"), cms.InputTag("g4SimHits","MuonDTHits"), cms.InputTag("g4SimHits","MuonRPCHits"),
-        cms.InputTag("g4SimHits","TotemHitsRP"), cms.InputTag("g4SimHits","PPSTrackerHits"),
-        cms.InputTag("g4SimHits","TrackerHitsPixelBarrelHighTof"), cms.InputTag("g4SimHits","TrackerHitsPixelBarrelLowTof"),
-        cms.InputTag("g4SimHits","TrackerHitsPixelEndcapHighTof"), cms.InputTag("g4SimHits","TrackerHitsPixelEndcapLowTof"),
-	cms.InputTag("g4SimHits","TrackerHitsTECHighTof"), cms.InputTag("g4SimHits","TrackerHitsTECLowTof"), cms.InputTag("g4SimHits","TrackerHitsTIBHighTof"),
-        cms.InputTag("g4SimHits","TrackerHitsTIBLowTof"), cms.InputTag("g4SimHits","TrackerHitsTIDHighTof"),
-	cms.InputTag("g4SimHits","TrackerHitsTIDLowTof"), cms.InputTag("g4SimHits","TrackerHitsTOBHighTof"), cms.InputTag("g4SimHits","TrackerHitsTOBLowTof"))
+        cms.InputTag("g4SimHits","TotemHitsRP"), cms.InputTag("g4SimHits","PPSTrackerHits"))
 
 process.mix.mixObjects.mixSH.subdets = cms.vstring(
-       # 'BSCHits',
-       # 'BCM1FHits',
-       # 'PLTHits',
-       # 'FP420SI',
-        'MuonCSCHits',
-        'MuonDTHits',
-        'MuonRPCHits',
         'TotemHitsRP',
-        'PPSTrackerHits',
-        'TrackerHitsPixelBarrelHighTof',
-        'TrackerHitsPixelBarrelLowTof',
-        'TrackerHitsPixelEndcapHighTof',
-        'TrackerHitsPixelEndcapLowTof',
-        'TrackerHitsTECHighTof',
-        'TrackerHitsTECLowTof',
-        'TrackerHitsTIBHighTof',
-        'TrackerHitsTIBLowTof',
-        'TrackerHitsTIDHighTof',
-        'TrackerHitsTIDLowTof',
-        'TrackerHitsTOBHighTof',
-        'TrackerHitsTOBLowTof')
+        'PPSTrackerHits')
 
-process.mix.mixObjects.mixSH.crossingFrames = cms.untracked.vstring('MuonCSCHits',
-'MuonDTHits',
-'MuonRPCHits',
+process.mix.mixObjects.mixSH.crossingFrames = cms.untracked.vstring(
 'TotemHitsRP',
 'PPSTrackerHits')
 
@@ -530,7 +510,7 @@ process.load("SimTotem.RPDigiProducer.RPSiDetConf_cfi")
 # #######
 process.load("RecoCTPPS.Configuration.recoCTPPS_cff")
 process.totemRPClusterProducer.tagDigi = cms.InputTag("RPSiDetDigitizer")
-process.dump = cms.EDAnalyzer("EventContentAnalyzer")
+# process.dump = cms.EDAnalyzer("EventContentAnalyzer")
 #
 process.p1 = cms.Path(
 	process.generator
