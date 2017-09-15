@@ -46,13 +46,13 @@ process = cms.Process("TestFlatGun")
 
 # Specify the maximum events to simulate
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(1000)
+    input = cms.untracked.int32(300000)
 )
 
 # Configure the output module (save the result in a file)
 process.o1 = cms.OutputModule("PoolOutputModule",
     outputCommands = cms.untracked.vstring('keep *'),
-    fileName = cms.untracked.string('file:eliza_1k.root')
+    fileName = cms.untracked.string('file:eliza_300k.root')
 )
 process.outpath = cms.EndPath(process.o1)
 
@@ -81,17 +81,23 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
     LHCTransport = cms.PSet(initialSeed = cms.untracked.uint32(24143), engineName = cms.untracked.string('TRandom3')
   )
 )
+
 ################# STEP 2 process.SmearingGenerator
 process.SmearingGenerator = cms.EDProducer("GaussEvtVtxEnergyGenerator",
-    src   = cms.InputTag("generator"),
+    src   = cms.InputTag("generator", "unsmeared"),
     MeanX = cms.double(0.0),
     MeanY = cms.double(0.0),
     MeanZ = cms.double(0.0),
     SigmaX = cms.double(0.000001),
     SigmaY = cms.double(0.000001),
     SigmaZ = cms.double(0.000001),
-    TimeOffset = cms.double(0.0)
+    TimeOffset = cms.double(0.0),
+    verbosity = cms.untracked.uint32(0)
 )
+
+# Smearing
+# process.load("IOMC.SmearingGenerator.SmearingGenerator_cfi")
+
 # declare optics parameters
 #process.load("Configuration.TotemOpticsConfiguration.OpticsConfig_6500GeV_0p8_145urad_cfi")
 process.BeamOpticsParamsESSource = cms.ESSource("BeamOpticsParamsESSource",
@@ -115,7 +121,7 @@ process.BeamOpticsParamsESSource = cms.ESSource("BeamOpticsParamsESSource",
 process.ProtonTransportFunctionsESSource = cms.ESProducer("ProtonTransportFunctionsESSource",
     opticsFile = cms.string(''), # automatic
     maySymmetrize = cms.bool(True), # this optic is assymmetric
-    verbosity = cms.untracked.uint32(1)
+    verbosity = cms.untracked.uint32(0)
 )
 
 BeamProtTransportSetup = cms.PSet(
@@ -136,8 +142,6 @@ BeamProtTransportSetup = cms.PSet(
 #
 # # Geometry - beta* specific
 # process.load("Geometry.VeryForwardGeometry.geometryRP_cfi")
-
-# DDL geometry (ideal)
 totemGeomXMLFiles = cms.vstring(
     'Geometry/CMSCommonData/data/materials.xml',
     'Geometry/CMSCommonData/data/rotations.xml',
@@ -238,7 +242,7 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 
 process.load("SimG4Core.Application.g4SimHits_cfi")
 process.g4SimHits.Physics.BeamProtTransportSetup = BeamProtTransportSetup
-#process.g4SimHits.Generator.HepMCProductLabel = 'generator'    # The input source for G4 module is connected to "process.source".
+# process.g4SimHits.Generator.HepMCProductLabel = 'generator'    # The input source for G4 module is connected to "process.source".
 process.g4SimHits.G4TrackingManagerVerbosity = cms.untracked.int32(0)
 process.g4SimHits.OverrideUserStackingAction = cms.bool(True)   # HINT: TOTEM specific
 process.g4SimHits.TransportParticlesThroughWholeBeampipe = cms.bool(True)
@@ -479,17 +483,26 @@ process.load("RecoCTPPS.Configuration.recoCTPPS_cff")
 process.totemRPClusterProducer.tagDigi = cms.InputTag("RPSiDetDigitizer")
 # process.dump = cms.EDAnalyzer("EventContentAnalyzer")
 #
+# process.content = cms.EDAnalyzer("EventContentAnalyzer")
+# process.content.verbose = cms.untracked.bool(True)
+#process.content.getData = cms.untracked.bool(True)
+
+# Just to make consistent with simulation
+# From where it is?
+import copy
+process.XMLIdealGeometryESSource_CTPPS = copy.deepcopy(process.XMLIdealGeometryESSource)
+
 process.p1 = cms.Path(
-	process.generator
-#*process.VtxSmeared
-	*process.SmearingGenerator
-	*process.g4SimHits
-       	*process.mix
-	*process.RPSiDetDigitizer
-        #*process.RPClustProd
-        #*process.RPHecoHitProd
-	# *process.RPSinglTrackCandFind
-	# *process.RPSingleTrackCandCollFit
-#	*process.RP220Reconst
-	*process.recoCTPPS
+    process.generator
+    #*process.VtxSmeared
+    *process.SmearingGenerator
+    *process.g4SimHits
+    *process.mix
+    *process.RPSiDetDigitizer
+    #*process.RPClustProd
+    #*process.RPHecoHitProd
+    # *process.RPSinglTrackCandFind
+    # *process.RPSingleTrackCandCollFit
+    #	*process.RP220Reconst
+    *process.recoCTPPS
 )

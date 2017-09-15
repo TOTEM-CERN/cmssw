@@ -91,7 +91,8 @@ process.generator = cms.EDFilter("Pythia8GeneratorFilter",
         parameterSets = cms.vstring(
             'processParameters'
         )
-    )
+    ),
+    instanceLabel = cms.untracked.string('generator') # added by me (there was some error)
 )
 # PYTHIA END
 
@@ -258,7 +259,7 @@ process.XMLIdealGeometryESSource = cms.ESSource("XMLIdealGeometryESSource",
 )
 
 # extended geometries
-TotemRPGeometryESModule = cms.ESProducer("TotemRPGeometryESModule",
+process.TotemRPGeometryESModule = cms.ESProducer("TotemRPGeometryESModule",
     verbosity = cms.untracked.uint32(1)
 )
 # END OF Configuration.TotemCommon.geometryRP_cfi
