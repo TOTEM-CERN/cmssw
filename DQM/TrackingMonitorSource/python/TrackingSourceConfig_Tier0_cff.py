@@ -1,6 +1,5 @@
 import FWCore.ParameterSet.Config as cms
 import RecoTracker.IterativeTracking.iterativeTkConfig as _cfg
-import RecoTracker.IterativeTracking.iterativeTkUtils as _utils
 
 ### load which are the tracks collection 2 be monitored
 from DQM.TrackingMonitorSource.TrackCollections2monitor_cff import *
@@ -49,11 +48,11 @@ for tracks in selectedTracks :
         locals()[label].doEffFromHitPatternVsBX = False
     else:
         locals()[label].doEffFromHitPatternVsBX = doEffFromHitPatternVsBX[tracks]
-#    locals()[label].doStopSource                        = doStopSource                        [tracks]    
+    #    locals()[label].doStopSource                        = doStopSource                        [tracks]
     locals()[label].setLabel(label)
-    
+
     # ZeroBias
-    label = 'TrackerCollisionSelectedTrackMonMB' + str(tracks)                       
+    label = 'TrackerCollisionSelectedTrackMonMB' + str(tracks)
     locals()[label] = TrackerCollisionTrackMonMB.clone()
     locals()[label].TrackProducer    = cms.InputTag(tracks)
     locals()[label].FolderName       = cms.string(mainfolderName[tracks])
@@ -89,11 +88,11 @@ for tracks in selectedTracks :
     locals()[label].doEffFromHitPatternVsPU             = doEffFromHitPatternVsPU             [tracks]
     locals()[label].doEffFromHitPatternVsBX             = doEffFromHitPatternVsBX             [tracks]
     locals()[label].doEffFromHitPatternVsLUMI           = cms.bool(True)
-    locals()[label].doStopSource                        = doStopSource                        [tracks]    
+    locals()[label].doStopSource                        = doStopSource                        [tracks]
     locals()[label].setLabel(label)
 
     # ZeroBias, no hip, no OOT pu (1st collision after abort gap) ###
-    label = 'TrackerCollisionSelectedTrackMonZBnoHIPnoOOT' + str(tracks)                       
+    label = 'TrackerCollisionSelectedTrackMonZBnoHIPnoOOT' + str(tracks)
     locals()[label] = TrackerCollisionTrackMonZBnoHIPnoOOT.clone()
     locals()[label].TrackProducer    = cms.InputTag(tracks)
     locals()[label].FolderName       = cms.string(mainfolderName[tracks]+"/noHIP_noOOT_INpu")
@@ -129,11 +128,11 @@ for tracks in selectedTracks :
     locals()[label].doEffFromHitPatternVsPU             = doEffFromHitPatternVsPU             [tracks]
     locals()[label].doEffFromHitPatternVsBX             = doEffFromHitPatternVsBX             [tracks]
     locals()[label].doEffFromHitPatternVsLUMI           = False
-    locals()[label].doStopSource                        = doStopSource                        [tracks]    
+    locals()[label].doStopSource                        = doStopSource                        [tracks]
     locals()[label].setLabel(label)
 
     # ZeroBias, hip, no OOT pu (1st collision in train) ###
-    label = 'TrackerCollisionSelectedTrackMonZBHIPnoOOT' + str(tracks)                       
+    label = 'TrackerCollisionSelectedTrackMonZBHIPnoOOT' + str(tracks)
     locals()[label] = TrackerCollisionTrackMonZBHIPnoOOT.clone()
     locals()[label].TrackProducer    = cms.InputTag(tracks)
     locals()[label].FolderName       = cms.string(mainfolderName[tracks]+"/HIP_noOOT_INpu")
@@ -169,12 +168,12 @@ for tracks in selectedTracks :
     locals()[label].doEffFromHitPatternVsPU             = doEffFromHitPatternVsPU             [tracks]
     locals()[label].doEffFromHitPatternVsBX             = doEffFromHitPatternVsBX             [tracks]
     locals()[label].doEffFromHitPatternVsLUMI           = False
-    locals()[label].doStopSource                        = doStopSource                        [tracks]    
+    locals()[label].doStopSource                        = doStopSource                        [tracks]
     locals()[label].setLabel(label)
 
 
     # ZeroBias, hip, OOT pu (1st collision after train) ###
-    label = 'TrackerCollisionSelectedTrackMonZBHIPOOT' + str(tracks)                       
+    label = 'TrackerCollisionSelectedTrackMonZBHIPOOT' + str(tracks)
     locals()[label] = TrackerCollisionTrackMonZBHIPOOT.clone()
     locals()[label].TrackProducer    = cms.InputTag(tracks)
     locals()[label].FolderName       = cms.string(mainfolderName[tracks]+"/HIP_OOT_noINpu")
@@ -210,12 +209,12 @@ for tracks in selectedTracks :
     locals()[label].doEffFromHitPatternVsPU             = doEffFromHitPatternVsPU             [tracks]
     locals()[label].doEffFromHitPatternVsBX             = doEffFromHitPatternVsBX             [tracks]
     locals()[label].doEffFromHitPatternVsLUMI           = False
-    locals()[label].doStopSource                        = doStopSource                        [tracks]    
+    locals()[label].doStopSource                        = doStopSource                        [tracks]
     locals()[label].setLabel(label)
 
 
 #-------------------------------------------------
-# Tracking Monitor 
+# Tracking Monitor
 #-------------------------------------------------
 import DQM.TrackingMonitor.TrackingMonitorSeed_cfi
 
@@ -245,8 +244,8 @@ for step in seedInputTag.iterkeys():
 
 # DQM Services
 dqmInfoTracking = cms.EDAnalyzer("DQMEventInfo",
-    subSystemFolder = cms.untracked.string('Tracking')
-)
+                                 subSystemFolder = cms.untracked.string('Tracking')
+                                 )
 
 # LogMessageMonitor ####
 ### load which are the module to monitor
@@ -279,7 +278,7 @@ from DQM.TrackingMonitorSource.dedxHarmonic2monitor_cfi import *
 from DQM.TrackingMonitorSource.dEdxAnalyzer_cff import *
 
 
-# temporary patch in order to have BXlumi 
+# temporary patch in order to have BXlumi
 from RecoLuminosity.LumiProducer.lumiProducer_cff import *
 
 # import v0 monitoring
@@ -300,7 +299,7 @@ trackingDQMgoodOfflinePrimaryVertices.filter = cms.bool(False)
 # Sequence
 TrackingDQMSourceTier0 = cms.Sequence()
 # dEdx monitoring
-TrackingDQMSourceTier0 += dedxHarmonicSequence * dEdxMonCommon * dEdxHitMonCommon   
+TrackingDQMSourceTier0 += dedxHarmonicSequence * dEdxMonCommon * dEdxHitMonCommon
 #    # temporary patch in order to have BXlumi
 #    * lumiProducer
 # track collections
@@ -311,14 +310,8 @@ for tracks in selectedTracks :
     TrackingDQMSourceTier0 += cms.ignore(locals()[label])
 # seeding monitoring
 for _eraName, _postfix, _era in _cfg.allEras():
-    mvaSel = _utils.getMVASelectors(_postfix)
     _seq = cms.Sequence()
     for step in locals()["selectedIterTrackingStep"+_postfix]:
-        if step in mvaSel:
-            locals()["TrackSeedMon"+step].doMVAPlots = True
-            locals()["TrackSeedMon"+step].TrackProducerForMVA = mvaSel[step][0]
-            locals()["TrackSeedMon"+step].MVAProducers = mvaSel[step][1]
-
         _seq += locals()["TrackSeedMon"+step]
     if _eraName == "":
         locals()["TrackSeedMonSequence"] = _seq
@@ -336,7 +329,7 @@ TrackingDQMSourceTier0 += dqmInfoTracking
 
 TrackingDQMSourceTier0Common = cms.Sequence()
 # dEdx monitoring
-TrackingDQMSourceTier0Common += (dedxHarmonicSequence * dEdxMonCommon * dEdxHitMonCommon)    
+TrackingDQMSourceTier0Common += (dedxHarmonicSequence * dEdxMonCommon * dEdxHitMonCommon)
 ## monitor track collections
 for tracks in selectedTracks :
     if tracks != 'generalTracks':
@@ -355,7 +348,7 @@ TrackingDQMSourceTier0Common += dqmInfoTracking
 
 TrackingDQMSourceTier0MinBias = cms.Sequence()
 # dEdx monitoring
-TrackingDQMSourceTier0MinBias += dedxHarmonicSequence * dEdxMonCommon * dEdxHitMonCommon    
+TrackingDQMSourceTier0MinBias += dedxHarmonicSequence * dEdxMonCommon * dEdxHitMonCommon
 #    * lumiProducer
 #    * trackingDQMgoodOfflinePrimaryVertices
 # monitor track collections
