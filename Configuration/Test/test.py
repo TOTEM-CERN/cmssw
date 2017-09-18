@@ -1,6 +1,5 @@
 from SimG4Core.Application.hectorParameter_cfi import *
 import FWCore.ParameterSet.Config as cms
-import copy
 process = cms.Process("TestFlatGun")
 process.MessageLogger = cms.Service("MessageLogger",
     destinations = cms.untracked.vstring('warnings',
@@ -114,6 +113,7 @@ process.ProtonTransportFunctionsESSource = cms.ESProducer("ProtonTransportFuncti
 BeamProtTransportSetup = cms.PSet(
     Verbosity = cms.bool(True),
     ModelRootFile = cms.string('Geometry/VeryForwardProtonTransport/data/parametrization_6500GeV_90_transp_75.root'),
+    # ModelRootFile = cms.string('Geometry/VeryForwardProtonTransport/data/parametrization_6500GeV_0p4_185_reco_beam1.root'),   # new optics
     Model_IP_150_R_Name = cms.string('ip5_to_beg_150_station_lhcb1'),
     Model_IP_150_L_Name = cms.string('ip5_to_beg_150_station_lhcb1'),
 
