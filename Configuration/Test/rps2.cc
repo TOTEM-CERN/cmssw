@@ -20,7 +20,7 @@ using namespace std;
 const int mode = 1;
 
 // filename:
-TFile file("eliza_100000.root");
+TFile file("test.root");
 
 // select the RPs to draw - leave (-1) to draw all of them
 const int arm = 1;

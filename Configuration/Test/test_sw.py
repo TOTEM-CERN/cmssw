@@ -3,56 +3,54 @@ import FWCore.ParameterSet.Config as cms
 import copy
 
 
-
-
 process = cms.Process("TestFlatGun")
-# process.MessageLogger = cms.Service("MessageLogger",
-#     destinations = cms.untracked.vstring('warnings',
-#         'errors',
-#         'infos',
-#         'debugs'),
-#     categories = cms.untracked.vstring('ForwardSim',
-#         'TotemRP'),
-#     debugModules = cms.untracked.vstring('*'),
-#     errors = cms.untracked.PSet(
-#         threshold = cms.untracked.string('ERROR')
-#     ),
-#     warnings = cms.untracked.PSet(
-#         threshold = cms.untracked.string('WARNING')
-#     ),
-#     infos = cms.untracked.PSet(
-#         threshold = cms.untracked.string('INFO')
-#     ),
-#     debugs = cms.untracked.PSet(
-#         threshold = cms.untracked.string('DEBUG'),
-#         INFO = cms.untracked.PSet(
-#             limit = cms.untracked.int32(0)
-#         ),
-#         DEBUG = cms.untracked.PSet(
-#             limit = cms.untracked.int32(0)
-#         ),
-#         TotemRP = cms.untracked.PSet(
-#             limit = cms.untracked.int32(1000000)
-#         ),
-#         ForwardSim = cms.untracked.PSet(
-#             limit = cms.untracked.int32(1000000)
-#         )
-#     )
-# )
+process.MessageLogger = cms.Service("MessageLogger",
+    destinations = cms.untracked.vstring('warnings',
+        'errors',
+        'infos',
+        'debugs'),
+    categories = cms.untracked.vstring('ForwardSim',
+        'TotemRP'),
+    debugModules = cms.untracked.vstring('*'),
+    errors = cms.untracked.PSet(
+        threshold = cms.untracked.string('ERROR')
+    ),
+    warnings = cms.untracked.PSet(
+        threshold = cms.untracked.string('WARNING')
+    ),
+    infos = cms.untracked.PSet(
+        threshold = cms.untracked.string('INFO')
+    ),
+    debugs = cms.untracked.PSet(
+        threshold = cms.untracked.string('DEBUG'),
+        INFO = cms.untracked.PSet(
+            limit = cms.untracked.int32(0)
+        ),
+        DEBUG = cms.untracked.PSet(
+            limit = cms.untracked.int32(0)
+        ),
+        TotemRP = cms.untracked.PSet(
+            limit = cms.untracked.int32(1000000)
+        ),
+        ForwardSim = cms.untracked.PSet(
+            limit = cms.untracked.int32(1000000)
+        )
+    )
+)
 
-# Added timing service to see how long one event is being processed (on average) 
-process.Timing = cms.Service("Timing")
+# Added timing service to see how long one event is being processed (on average)
+# process.Timing = cms.Service("Timing")
 
 
 # Specify the maximum events to simulate
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(1000)
+    input = cms.untracked.int32(300)
 )
 
 # Configure the output module (save the result in a file)
 process.o1 = cms.OutputModule("PoolOutputModule",
     outputCommands = cms.untracked.vstring('keep *'),
-    fileName = cms.untracked.string('file:eliza_1k.root')
+    fileName = cms.untracked.string('file:test.root')
 )
 process.outpath = cms.EndPath(process.o1)
 
@@ -121,7 +119,7 @@ process.ProtonTransportFunctionsESSource = cms.ESProducer("ProtonTransportFuncti
 
 BeamProtTransportSetup = cms.PSet(
     Verbosity = cms.bool(False),
-    ModelRootFile = cms.string('Geometry/TotemRPOptics/data/parametrization_6500GeV_90p0_50urad_transp.root'), # eliza specific
+    ModelRootFile = cms.string('Geometry/VeryForwardProtonTransport/data/parametrization_6500GeV_0p4_185_reco_beam1.root'),
     Model_IP_150_R_Name = cms.string('ip5_to_beg_150_station_lhcb1'),
     Model_IP_150_L_Name = cms.string('ip5_to_beg_150_station_lhcb1'),
 
@@ -225,9 +223,7 @@ process.XMLIdealGeometryESSource = cms.ESSource("XMLIdealGeometryESSource",
 )
 
 # position of RPs
-# process.XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/data/2016_ctpps_15sigma_margin0/RP_Dist_Beam_Cent.xml")
-process.XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/TotemRPData/data/2015_10_17_fill4509/RP_Dist_Beam_Cent.xml") # eliza specific
-
+process.XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/data/2016_ctpps_15sigma_margin0/RP_Dist_Beam_Cent.xml")
 
 # extended geometries
 process.TotemRPGeometryESModule = cms.ESProducer("TotemRPGeometryESModule",
@@ -264,47 +260,48 @@ process.g4SimHits.UseMeasuredGeometryRecord = cms.untracked.bool(False)  # HINT:
 process.g4SimHits.SteppingVerbosity = cms.int32(0)
 process.g4SimHits.G4EventManagerVerbosity = cms.untracked.int32(0)
 process.g4SimHits.G4StackManagerVerbosity = cms.untracked.int32(0)
-# process.g4SimHits.Watchers = cms.VPSet(
-#     cms.PSet(
-#         DumpSummary    = cms.untracked.bool(True),
-#         DumpLVTree     = cms.untracked.bool(True),
-#         DumpMaterial   = cms.untracked.bool(False),
-#         DumpLVList     = cms.untracked.bool(True),
-#         DumpLV         = cms.untracked.bool(True),
-#         DumpSolid      = cms.untracked.bool(True),
-#         DumpAttributes = cms.untracked.bool(False),
-#         DumpPV         = cms.untracked.bool(True),
-#         DumpRotation   = cms.untracked.bool(False),
-#         DumpReplica    = cms.untracked.bool(False),
-#         DumpTouch      = cms.untracked.bool(False),
-#         DumpSense      = cms.untracked.bool(False),
-#         Name           = cms.untracked.string('TotemT*'),
-#         #Names          = cms.untracked.vstring(' '),
-#         type           = cms.string('PrintGeomInfoAction'),
-#         TotemRP = cms.PSet(
-#             Names = cms.vstring('TotemHitsRP'),
-#             FileName = cms.string('TotemTestRP_Hits.root'),
-#             RPDebugFileName = cms.string('TotemDebugRP.root'),
-#             FileNameOLD = cms.string('TotemTestRP_Hits_Old.root'),
-#             Verbosity = cms.bool(True)
-#             )
-#         )
-#     #     cms.PSet( # HINT: TOTEM specific
-#     #         type = cms.string('SimTracer'),
-#     #         SimTracer = cms.PSet(verbose = cms.bool(True)),
-#     #    ),
-#     #    cms.PSet( # HINT: TOTEM specific
-#     #        type = cms.string('TotemRP'),
-#     #        TotemRP = cms.PSet(
-#     #            Names = cms.vstring('TotemHitsRP'),
-#     #            FileName = cms.string('TotemTestRP_Hits.root'),
-#     #            RPDebugFileName = cms.string('TotemDebugRP.root'),
-#     #            FileNameOLD = cms.string('TotemTestRP_Hits_Old.root'),
-#     #            Verbosity = cms.bool(True)
-#     #        )
-#     #    )
-#     )
+process.g4SimHits.Watchers = cms.VPSet(
+    cms.PSet(
+        DumpSummary    = cms.untracked.bool(True),
+        DumpLVTree     = cms.untracked.bool(True),
+        DumpMaterial   = cms.untracked.bool(False),
+        DumpLVList     = cms.untracked.bool(True),
+        DumpLV         = cms.untracked.bool(True),
+        DumpSolid      = cms.untracked.bool(True),
+        DumpAttributes = cms.untracked.bool(False),
+        DumpPV         = cms.untracked.bool(True),
+        DumpRotation   = cms.untracked.bool(False),
+        DumpReplica    = cms.untracked.bool(False),
+        DumpTouch      = cms.untracked.bool(False),
+        DumpSense      = cms.untracked.bool(False),
+        Name           = cms.untracked.string('TotemT*'),
+        #Names          = cms.untracked.vstring(' '),
+        type           = cms.string('PrintGeomInfoAction'),
+        TotemRP = cms.PSet(
+            Names = cms.vstring('TotemHitsRP'),
+            FileName = cms.string('TotemTestRP_Hits.root'),
+            RPDebugFileName = cms.string('TotemDebugRP.root'),
+            FileNameOLD = cms.string('TotemTestRP_Hits_Old.root'),
+            Verbosity = cms.bool(False)
+            )
+        )
+    #     cms.PSet( # HINT: TOTEM specific
+    #         type = cms.string('SimTracer'),
+    #         SimTracer = cms.PSet(verbose = cms.bool(True)),
+    #    ),
+    #    cms.PSet( # HINT: TOTEM specific
+    #        type = cms.string('TotemRP'),
+    #        TotemRP = cms.PSet(
+    #            Names = cms.vstring('TotemHitsRP'),
+    #            FileName = cms.string('TotemTestRP_Hits.root'),
+    #            RPDebugFileName = cms.string('TotemDebugRP.root'),
+    #            FileNameOLD = cms.string('TotemTestRP_Hits_Old.root'),
+    #            Verbosity = cms.bool(True)
+    #        )
+    #    )
+    )
 
+# print(str(process.g4SimHits.Watchers))
 
 process.g4SimHits.HepMCProductLabel = cms.InputTag("generator")
 process.g4SimHits.Physics.DefaultCutValue = cms.double(100.0)
@@ -499,13 +496,41 @@ process.mix = cms.EDProducer("MixingModule",
 
 #from SimGeneral/MixingModule/python/mix_Objects_cfi.py
 process.mix.mixObjects.mixSH.input =  cms.VInputTag(  # note that this list needs to be in the same order as the subdets
-        cms.InputTag("g4SimHits","TotemHitsRP"), cms.InputTag("g4SimHits","PPSTrackerHits"))
+        #cms.InputTag("g4SimHits","BSCHits"), cms.InputTag("g4SimHits","BCM1FHits"), cms.InputTag("g4SimHits","PLTHits"), cms.InputTag("g4SimHits","FP420SI"),
+        cms.InputTag("g4SimHits","MuonCSCHits"), cms.InputTag("g4SimHits","MuonDTHits"), cms.InputTag("g4SimHits","MuonRPCHits"),
+        cms.InputTag("g4SimHits","TotemHitsRP"), cms.InputTag("g4SimHits","PPSTrackerHits"),
+        cms.InputTag("g4SimHits","TrackerHitsPixelBarrelHighTof"), cms.InputTag("g4SimHits","TrackerHitsPixelBarrelLowTof"),
+        cms.InputTag("g4SimHits","TrackerHitsPixelEndcapHighTof"), cms.InputTag("g4SimHits","TrackerHitsPixelEndcapLowTof"),
+	cms.InputTag("g4SimHits","TrackerHitsTECHighTof"), cms.InputTag("g4SimHits","TrackerHitsTECLowTof"), cms.InputTag("g4SimHits","TrackerHitsTIBHighTof"),
+        cms.InputTag("g4SimHits","TrackerHitsTIBLowTof"), cms.InputTag("g4SimHits","TrackerHitsTIDHighTof"),
+	cms.InputTag("g4SimHits","TrackerHitsTIDLowTof"), cms.InputTag("g4SimHits","TrackerHitsTOBHighTof"), cms.InputTag("g4SimHits","TrackerHitsTOBLowTof"))
 
 process.mix.mixObjects.mixSH.subdets = cms.vstring(
+       # 'BSCHits',
+       # 'BCM1FHits',
+       # 'PLTHits',
+       # 'FP420SI',
+        'MuonCSCHits',
+        'MuonDTHits',
+        'MuonRPCHits',
         'TotemHitsRP',
-        'PPSTrackerHits')
+        'PPSTrackerHits',
+        'TrackerHitsPixelBarrelHighTof',
+        'TrackerHitsPixelBarrelLowTof',
+        'TrackerHitsPixelEndcapHighTof',
+        'TrackerHitsPixelEndcapLowTof',
+        'TrackerHitsTECHighTof',
+        'TrackerHitsTECLowTof',
+        'TrackerHitsTIBHighTof',
+        'TrackerHitsTIBLowTof',
+        'TrackerHitsTIDHighTof',
+        'TrackerHitsTIDLowTof',
+        'TrackerHitsTOBHighTof',
+        'TrackerHitsTOBLowTof')
 
-process.mix.mixObjects.mixSH.crossingFrames = cms.untracked.vstring(
+process.mix.mixObjects.mixSH.crossingFrames = cms.untracked.vstring('MuonCSCHits',
+'MuonDTHits',
+'MuonRPCHits',
 'TotemHitsRP',
 'PPSTrackerHits')
 
@@ -536,7 +561,7 @@ process.load("SimTotem.RPDigiProducer.RPSiDetConf_cfi")
 # #######
 process.load("RecoCTPPS.Configuration.recoCTPPS_cff")
 process.totemRPClusterProducer.tagDigi = cms.InputTag("RPSiDetDigitizer")
-# process.dump = cms.EDAnalyzer("EventContentAnalyzer")
+process.dump = cms.EDAnalyzer("EventContentAnalyzer")
 #
 process.p1 = cms.Path(
 	process.generator

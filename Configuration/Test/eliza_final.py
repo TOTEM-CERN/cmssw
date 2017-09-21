@@ -46,13 +46,13 @@ process = cms.Process("TestFlatGun")
 
 # Specify the maximum events to simulate
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(300000)
+    input = cms.untracked.int32(200)
 )
 
 # Configure the output module (save the result in a file)
 process.o1 = cms.OutputModule("PoolOutputModule",
     outputCommands = cms.untracked.vstring('keep *'),
-    fileName = cms.untracked.string('file:eliza_300k.root')
+    fileName = cms.untracked.string('file:eliza_200.root')
 )
 process.outpath = cms.EndPath(process.o1)
 

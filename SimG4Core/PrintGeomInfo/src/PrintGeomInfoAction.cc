@@ -1,7 +1,18 @@
+/****************************************************************************
+*
+* This is SimWatcher which logic comes from SimG4CMS/Forward/src/TotemRP.cc
+* Previous version of this file is available under the link:
+*   https://github.com/TOTEM-CERN/cmssw/commit/82986cb2fdcc4360b0a4af01c097a0c759c2b2fc
+*
+* This tricky solution is caused by problem in configuration file,
+* where it was impossible to directly load TotemRP SimWatcher
+****************************************************************************/
+
+
 #include "SimG4Core/PrintGeomInfo/interface/PrintGeomInfoAction.h"
 
-//#include "SimG4Core/Notification/interface/BeginOfJob.h" // duplicated in TotemRPs
-//#include "SimG4Core/Notification/interface/BeginOfRun.h" // duplicated in TotemRPs
+//#include "SimG4Core/Notification/interface/BeginOfJob.h" // both in PrintPrintGeomInfoAction and in TotemRPs
+//#include "SimG4Core/Notification/interface/BeginOfRun.h" // both in PrintPrintGeomInfoAction and in TotemRPs
 
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/Framework/interface/ESTransientHandle.h"
@@ -26,30 +37,24 @@
 #include "G4TransportationManager.hh"
 
 // TotemRP specific START
-
 #include "SimG4CMS/Forward/interface/TotemG4HitCollection.h"
-
 #include "SimG4Core/Notification/interface/BeginOfJob.h"
 #include "SimG4Core/Notification/interface/BeginOfRun.h"
 #include "SimG4Core/Notification/interface/BeginOfEvent.h"
 #include "SimG4Core/Notification/interface/BeginOfTrack.h"
 #include "SimG4Core/Notification/interface/EndOfEvent.h"
 #include "SimG4Core/Notification/interface/EndOfTrack.h"
-
 #include "G4SDManager.hh"
 #include "G4ParticleTable.hh"
-
-// for EndOfEvent
+// EndOfEvent requires:
 #include "DataFormats/CTPPSDetId/interface/TotemRPDetId.h"
-
-// G4Step
+// G4Step requires:
 #include "SimG4Core/Notification/interface/TrackInformation.h"
-
-// BeginOfTrack
+// BeginOfTrack requires:
 #include "G4VProcess.hh"
-
-
 // TotemRP specific END
+
+
 
 #include <set>
 #include <map>
@@ -71,7 +76,6 @@ particle_entering_station_id_code(-10)
 // TotemRP specific END
 {
 
-  // JUST TAKING ARGUMENTS FROM CONFIG FILE
   _dumpSummary = p.getUntrackedParameter<bool>("DumpSummary", true);
   _dumpLVTree  = p.getUntrackedParameter<bool>("DumpLVTree",  true);
   _dumpMaterial= p.getUntrackedParameter<bool>("DumpMaterial",false);
@@ -90,7 +94,6 @@ particle_entering_station_id_code(-10)
   // names = p.getUntrackedParameter<std::vector<std::string> >("Names");
 
     // TotemRP specific START
-
     edm::ParameterSet m_Anal = p.getParameter<edm::ParameterSet>("TotemRP");
     verbosity_ = m_Anal.getParameter<bool>("Verbosity");
     fileName = m_Anal.getParameter<std::string>("FileName");
@@ -110,13 +113,9 @@ particle_entering_station_id_code(-10)
     histos = new TotemRPHisto(nomeFile);
     event_no = -1;
     InitializePhysicalDetMap();
-
-
     // TotemRP specific END
 
-
-    // PRINTING THESE ARGUMENTS...
-  G4cout << "PrintGeomInfoAction:: <HELLO WE SHOULD SEE IT> initialised with verbosity levels:"
+    G4cout << "PrintGeomInfoAction:: initialised with verbosity levels:"
 	 << " Summary   " << _dumpSummary << " LVTree   " << _dumpLVTree
 	 << " LVList    " << _dumpLVList  << " Material " << _dumpMaterial
 	 << "\n                                                        "
@@ -138,7 +137,9 @@ particle_entering_station_id_code(-10)
 // TotemRP specific START
 void PrintGeomInfoAction::InitializePhysicalDetMap()
 {
-    G4cout << "DUPA :) JESTEM W INITALIZEPHYSICALDETMAP" << G4endl;
+    if(verbosity_){
+        G4cout << "Entered PrintGeomInfoAction.ccInitializePhysicalDetMap" << G4endl;
+    }
     PhysicalDetMap["Other"] = 0;
     PhysicalDetMap["RP_Silicon_Detector"] = 1;
     PhysicalDetMap["RP_Separ_Spacer"] = 2;
@@ -255,7 +256,7 @@ bool PrintGeomInfoAction::IsPrimary(const G4Track * track)
 //=================================================================== job
 
 void PrintGeomInfoAction::update(const BeginOfJob * job){
-    G4cout << "Hello from: PrintGeomInfoAction.cc BeginOfJob\n";
+    G4cout << "Entered PrintGeomInfoAction.BeginOfJob\n";
 
     // Ntuples
     tuplesManager.reset(new TotemRPHistoManager(fileName));
@@ -265,7 +266,9 @@ void PrintGeomInfoAction::update(const BeginOfJob * job){
 //=================================================================== event
 
 void PrintGeomInfoAction::update(const BeginOfEvent * evt){
-    G4cout << "Hello from: PrintGeomInfoAction.cc BeginOfEvent\n";
+    if(verbosity_){
+        G4cout << "Entered PrintGeomInfoAction.BeginOfEvent\n";
+    }
 
     // create tuple object
     tuples = new TotemRPHistoClass();
@@ -276,7 +279,7 @@ void PrintGeomInfoAction::update(const BeginOfEvent * evt){
     if(verbosity_)
     {
         LogDebug("TotemRP") << "TotemRP: Begin of event = " << iev;
-        edm::LogInfo("TotemRP") << " Begin event !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! event " << (*evt)()->GetEventID() << std::endl;
+        edm::LogInfo("TotemRP") << " Begin of event " << (*evt)()->GetEventID() << std::endl;
     }
 
     // access to the G4 hit collections
@@ -307,8 +310,6 @@ void PrintGeomInfoAction::update(const BeginOfEvent * evt){
             G4PrimaryParticle* primary = PrimVert->GetPrimary(j);
             if(primary->GetPDGcode()==2212)
             {
-                G4cout << "Hello from loop in BeginOfEvent - filling histos\n";
-
                 histos->set_EVT(evtnum);
                 histos->set_UID(primary_proton_id_code);   //for primary particles
                 histos->set_Ptype(primary->GetPDGcode());
@@ -352,11 +353,10 @@ void PrintGeomInfoAction::update(const BeginOfEvent * evt){
 }
 
 void PrintGeomInfoAction::update(const EndOfEvent * evt){
-    G4cout << "Hello from: PrintGeomInfoAction.cc EndOfEvent\n";
-
-
-    if(verbosity_)
+    if(verbosity_){
+        G4cout << "Entered PrintGeomInfoAction.EndOfEvent\n";
         edm::LogInfo("TotemRP") << " Fill event " << (*evt)()->GetEventID() << std::endl;
+    }
 
     // access to the G4 hit collections
     G4HCofThisEvent* allHC = (*evt)()->GetHCofThisEvent();
@@ -427,10 +427,6 @@ void PrintGeomInfoAction::update(const EndOfEvent * evt){
                         prim_vert_id = PhysicalDetMap[myVolume->GetName()];
                     }
 
-
-                    G4cout << "Hello from loop in EndOfEvent - filling histos\n";
-
-
                     histos->set_EVT(evtnum);
 
                     TotemRPDetId det_id((uint32_t)UID);
@@ -471,11 +467,10 @@ void PrintGeomInfoAction::update(const EndOfEvent * evt){
         }
     }
 
-    // tu juz sa tuple do tuplesManager
     tuplesManager->fillTree(tuples);
 
     if(verbosity_)
-        LogDebug("TotemRP") << "TotemRP:: --- after fillTree";
+        LogDebug("TotemRP") << "PrintGeomInfoAction tuplesManager just filled tuples";
 
 }
 
@@ -501,8 +496,6 @@ void PrintGeomInfoAction::FillIfLeavesRP220Station(const G4Step * aStep)
             //edm::LogInfo("TotemRP")<<"!!read"<<std::endl;
             //std::cout<<"220 right station left"<<std::endl;
             const G4Track *theTrack = aStep->GetTrack();
-
-            G4cout << "Hello from G4Step - FillIfLeavesRP220Station - filling\n";
 
             histos->set_EVT(event_no);
             histos->set_UID(particle_leaving_220_right_station_id_code);   //for particles going from RP station 220m
@@ -675,9 +668,6 @@ void PrintGeomInfoAction::FillIfParticleEntersRP(const G4Step * aStep)
         double z = hitPoint.z();
         double rp_id = aStep->GetPostStepPoint()->GetPhysicalVolume()->GetCopyNo();
 
-        G4cout << "Hello from G4Step - FillIfParticleEntersRP - filling\n";
-
-
         histos->set_EVT(event_no);
         histos->set_UID(particle_entering_RP_id_code);   //for particles entering RP
         histos->set_Ptype(theTrack->GetDefinition()->GetPDGEncoding());
@@ -733,9 +723,6 @@ void PrintGeomInfoAction::FillIfParticleLeavesFrontWallOfRP(const G4Step * aStep
         double rp_id = ph_vol->GetCopyNo();
 //    edm::LogInfo("TotemRP")<<"rp id:"<<rp_id<<" name:"<<theTrack->GetDefinition()->GetParticleName()<<std::endl;
 
-        G4cout << "Hello from G4Step - FillIfParticleLeavesFrontWallOfRP - filling\n";
-
-
         histos->set_EVT(event_no);
         histos->set_UID(particle_leaving_front_wall_of_RP_id_code);   //for particles leaving the front wall of RP
         histos->set_Ptype(theTrack->GetDefinition()->GetPDGEncoding());
@@ -789,8 +776,6 @@ void PrintGeomInfoAction::FillIfParticleLeavesRP(const G4Step * aStep)
         double z = hitPoint.z();
         double rp_id = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
 
-        G4cout << "Hello from G4Step - FillIfParticleLeavesRP - filling\n";
-
         histos->set_EVT(event_no);
         histos->set_UID(particle_leaving_RP_id_code);   //for particles going from RP station 220m
         histos->set_Ptype( theTrack->GetDefinition()->GetPDGEncoding() );
@@ -826,7 +811,9 @@ void PrintGeomInfoAction::FillIfParticleLeavesRP(const G4Step * aStep)
 
 
 void PrintGeomInfoAction::update(const G4Step * aStep){
-    G4cout << "Hello from: PrintGeomInfoAction.cc G4Step\n";
+    if(verbosity_){
+        G4cout << "Entered PrintGeomInfoAction.G4Step\n";
+    }
 
     const G4ThreeVector& pre_step_pos = aStep->GetPreStepPoint()->GetPosition();
     const G4ThreeVector& post_step_pos = aStep->GetPostStepPoint()->GetPosition();
@@ -868,7 +855,9 @@ void PrintGeomInfoAction::update(const G4Step * aStep){
 //=================================================================== track
 
 void PrintGeomInfoAction::update(const BeginOfTrack * beg_of_track){
-    G4cout << "Hello from: PrintGeomInfoAction.cc BeginOfTrack\n";
+    if(verbosity_){
+        G4cout << "PrintGeomInfoAction.BeginOfTrack\n";
+    }
 
     const G4Track *track = (*beg_of_track)();
 
@@ -888,8 +877,6 @@ void PrintGeomInfoAction::update(const BeginOfTrack * beg_of_track){
         double pos_x = position.x()/mm;
         double pos_y = position.y()/mm;
         double pos_z = position.z()/mm;
-
-        G4cout << "Hello from if in BeginOfTrack - filling histos\n";
 
 
         histos->set_EVT(event_no);
@@ -925,10 +912,12 @@ void PrintGeomInfoAction::update(const BeginOfTrack * beg_of_track){
 void PrintGeomInfoAction::update(const EndOfTrack * end_of_track){
     const G4Track *track = (*end_of_track)();
 
-    G4cout << "Hello from: PrintGeomInfoAction.cc EndOfTrack\n"
-           << "IsPrimary(track): " << IsPrimary(track) << "\n"
-           << "track->GetDefinition()->GetPDGEncoding(): " << track->GetDefinition()->GetPDGEncoding() <<"\n"
-           << "track->GetVolume()->GetName(): " << track->GetVolume()->GetName() << "\n";
+    if(verbosity_){
+        G4cout << "Entered PrintGeomInfoAction.EndOfTrack\n"
+               << "IsPrimary(track): " << IsPrimary(track) << "\n"
+               << "track->GetDefinition()->GetPDGEncoding(): " << track->GetDefinition()->GetPDGEncoding() <<"\n"
+               << "track->GetVolume()->GetName(): " << track->GetVolume()->GetName() << "\n";
+    }
 
     if(IsPrimary(track) && track->GetDefinition()->GetPDGEncoding()==2212 &&
        track->GetVolume()->GetName().substr(0, 3)=="RP_")
@@ -950,8 +939,6 @@ void PrintGeomInfoAction::update(const EndOfTrack * end_of_track){
         double x = position.x()/mm;
         double y = position.y()/mm;
         double z = position.z()/mm;
-
-        G4cout << "Hello from if in EndOfTrack - filling histos\n";
 
         histos->set_EVT(event_no);
         histos->set_UID(primary_proton_inelastic_event_in_RP_station);   //for particles going from RP station 220m
@@ -987,34 +974,32 @@ void PrintGeomInfoAction::update(const EndOfTrack * end_of_track){
 
         histos->fillNtuple();
 //    edm::LogInfo("TotemRP")<<"prim proton died "<<prim_vert_id<<std::endl;
-    } else {
-        G4cout << "Hello from if in EndOfTrack - NO!!! filling!!!! histos\n";
     }
 }
 
 //=================================================================== run
 void PrintGeomInfoAction::update(const EndOfRun * end_of_run){
-    // SHOULD BE REMOVED START
+    // Copied from SimG4CMS/Forward/src/TotemRPHisto.cc destructor.
     histos->rt_hf->cd();
     histos->ntuple->Write();
 
     histos->rt_hf->Close();
     //delete rt_hf;
 
-    edm::LogInfo("TotemRP") << std::endl << "TotemRPHisto - from my simwatcher:P: End writing user histograms " << std::endl;
-    // SHOULD BE REMOBED END
+    edm::LogInfo("TotemRP") << std::endl << "PrintGeomInfoAction.EndOfRun: End writing user histograms " << std::endl;
+
+    // dlaczego tutaj nie moge wywolac delete?
 }
-
-
-// TotemRP specific END
 
 
 PrintGeomInfoAction::~PrintGeomInfoAction() {
-   // G4cout << "Hello from: Destructive destructor\n";
+    // ORIGINAL ~PrintGeomInfoAction was empty
     delete histos;
 }
+// TotemRP specific END
 
-// duplicated in TotemRPs
+
+// Below function has been already written with TotemRPs logic, thus below one is commented.
 //void PrintGeomInfoAction::update(const BeginOfJob * job) {
 //
 ////  if (_dumpSense) {

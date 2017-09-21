@@ -29,7 +29,7 @@ const bool to_transform = false;
 const bool plotAll = false;
 const int chArId = 1;
 const int chStId = 0;
-TFile file("eliza_300k.root");
+TFile file("test.root");
 // END PARAMS
 
 // CONST
@@ -75,9 +75,6 @@ for(int i=0; i<RPCount; ++i) {
 	h[i]->GetXaxis()->SetTitle("x [mm]");
 	h[i]->GetYaxis()->SetTitle("y [mm]");
 }
-
-
-
 
 while (reader.Next()) {
 	for (int i=0; i<ps.GetSize(); i++) {

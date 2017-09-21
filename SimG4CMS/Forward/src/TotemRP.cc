@@ -37,8 +37,6 @@
 #include "G4ThreeVector.hh"
 #include "TString.h"
 
-#include <iostream>
-
 TotemRP::TotemRP(const edm::ParameterSet &p)
  : primary_proton_id_code(-1),  
  particle_leaving_220_right_station_id_code(-2),
@@ -51,8 +49,6 @@ TotemRP::TotemRP(const edm::ParameterSet &p)
  primary_proton_inelastic_event_in_RP_station(-5), 
  particle_entering_station_id_code(-10)//, 
 {
-  std::cout<<"dupa BEGIN"<<std::endl;
-
   edm::ParameterSet m_Anal = p.getParameter<edm::ParameterSet>("TotemRP");
   verbosity_ = m_Anal.getParameter<bool>("Verbosity");
   fileName = m_Anal.getParameter<std::string>("FileName");
@@ -69,8 +65,6 @@ TotemRP::TotemRP(const edm::ParameterSet &p)
   event_no = -1;
   edm::LogInfo("TotemRP") << "CREATO TotemRPHisto OBJECT " <<std::endl;
   InitializePhysicalDetMap();
-
-  std::cout<<"dupa END"<<std::endl;
 }
 
 TotemRP::~TotemRP()
