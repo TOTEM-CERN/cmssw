@@ -10,13 +10,13 @@
 
 For simulation:
 
--rps2.cc
--plotti-patryk.cc
+- rps2.cc
+- plotti-patryk.cc
 
 For reconstruction:
 
--recoHits.cc
+- recoHits.cc
 
 To plot desired plots adjust settings in .cc file and call:
 
--root *.cc
+- root *.cc
