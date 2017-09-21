@@ -38,7 +38,7 @@ process = cms.Process("TestFlatGun")
 
 # Specify the maximum events to simulate
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(99)
 )
 
 # Configure the output module (save the result in a file)
