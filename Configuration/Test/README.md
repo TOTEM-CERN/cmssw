@@ -7,12 +7,16 @@
 - Pythia8MBR_generated_cfi.py which was used in eliza simulation
 
 ## CC files for plotting results
+
 For simulation:
+
 -rps2.cc
 -plotti-patryk.cc
 
 For reconstruction:
+
 -recoHits.cc
 
 To plot desired plots adjust settings in .cc file and call:
-root *.cc
+
+-root *.cc
