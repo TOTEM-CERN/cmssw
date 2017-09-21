@@ -45,7 +45,7 @@
       <rParent name="CTPPS_Timing_Negative_Station:CTPPS_Timing_Negative_Station_Vacuum_4"/>
       <rChild name="CTPPS_Timing_Horizontal_Pot:Primary_Vacuum"/>
       <rRotation name="rotations:90YX"/>
-      <Translation x="([CTPPS_Timing_Horizontal_Pot:plane_length]+[CTPPS_Timing_Horizontal_Pot:bottom_wall_thickness])/2" y="0*cm" z="0*cm"/>
+      <Translation x="([CTPPS_Timing_Horizontal_Pot:plane_length]+[CTPPS_Timing_Horizontal_Pot:cut_depth]+[CTPPS_Timing_Horizontal_Pot:thin_window_thickness])/2" y="0*cm" z="0*cm"/>
     </PosPart>
     <PosPart copyNumber="1">
       <rParent name="CTPPS_Timing_Negative_Station:CTPPS_Timing_Negative_Station"/>
