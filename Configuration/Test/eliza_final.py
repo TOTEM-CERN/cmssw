@@ -498,8 +498,8 @@ process.p1 = cms.Path(
     *process.RPSiDetDigitizer
     #*process.RPClustProd
     #*process.RPHecoHitProd
-    # *process.RPSinglTrackCandFind
-    # *process.RPSingleTrackCandCollFit
-    #	*process.RP220Reconst
+    #*process.RPSinglTrackCandFind
+    #*process.RPSingleTrackCandCollFit
+    #*process.RP220Reconst
     *process.recoCTPPS
 )
