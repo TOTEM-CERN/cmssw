@@ -527,13 +527,13 @@ process.mix.mixObjects.mixSH.input =  cms.VInputTag(  # note that this list need
     cms.InputTag("g4SimHits","CTPPSHitsPixel"))
 
 process.mix.mixObjects.mixSH.subdets = cms.vstring(
-    'TotemHirsRP',
+    'TotemHitsRP',
     'CTPPSHitsDiamond',
     'CTPPSHitsUFSD',
     'CTPPSHitsPixel'
 )
 
-process.mix.mixObjects.mixSH.crossingFrames = cms.untracked.vstring('TotemHirsRP',
+process.mix.mixObjects.mixSH.crossingFrames = cms.untracked.vstring('TotemHitsRP',
                                                                     'CTPPSHitsDiamond',
                                                                     'CTPPSHitsUFSD',
                                                                     'CTPPSHitsPixel'
