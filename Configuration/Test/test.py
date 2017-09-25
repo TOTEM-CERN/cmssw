@@ -101,9 +101,9 @@ process.BeamOpticsParamsESSource = cms.ESSource("BeamOpticsParamsESSource",
     LightSpeed = cms.double(300000000.0),
     NormalizedEmittanceX = cms.double(3.75e-06),
     NormalizedEmittanceY = cms.double(3.75e-06),
-    BetaStarX = cms.double(0.8), # m
-    BetaStarY = cms.double(0.8), # m
-    CrossingAngleX = cms.double(145e-6),
+    BetaStarX = cms.double(0.4), # m
+    BetaStarY = cms.double(0.4), # m
+    CrossingAngleX = cms.double(185e-6),
     CrossingAngleY = cms.double(0.0),
     BeamDisplacementX = cms.double(0.0), # m
     BeamDisplacementY = cms.double(0.0), # m
@@ -320,6 +320,12 @@ process.load("SimGeneral.HepPDTESSource.pdt_cfi")
 process.g4SimHits.PPSSD = cms.PSet(
   Verbosity = cms.untracked.int32(0)
 )
+
+
+# Gnerate gdml file for geometry visualisation with SWAN tool
+# Set process.maxEvents to 1 in order to make simulation short.
+# process.g4SimHits.FileNameGDML = cms.untracked.string('810_geometry.gdml')
+
 #
 # ################## Step 3 - Magnetic field configuration
 # # todo declare in standard way (not as hardcoded raw config)
