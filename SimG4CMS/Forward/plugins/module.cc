@@ -1,4 +1,5 @@
 #include "SimG4CMS/Forward/interface/CastorSD.h"
+#include "SimG4CMS/Forward/interface/TotemRP.h"
 #include "SimG4CMS/Forward/interface/TotemSD.h"
 #include "SimG4CMS/Forward/interface/ZdcSD.h"
 #include "SimG4CMS/Forward/interface/TotemTestGem.h"
@@ -18,12 +19,18 @@
 #include "SimG4Core/SensitiveDetector/interface/SensitiveDetectorPluginFactory.h"
 #include "SimG4Core/Watcher/interface/SimWatcherFactory.h"
 #include "FWCore/PluginManager/interface/ModuleDef.h"
-  
+
 
 typedef CastorSD CastorSensitiveDetector;
 DEFINE_SENSITIVEDETECTOR(CastorSensitiveDetector);
 typedef TotemSD TotemSensitiveDetector;
 DEFINE_SENSITIVEDETECTOR(TotemSensitiveDetector);
+typedef TotemSD CTPPSSensitiveDetector;
+DEFINE_SENSITIVEDETECTOR(CTPPSSensitiveDetector);
+typedef TotemSD CTPPSDiamondSensitiveDetector;
+DEFINE_SENSITIVEDETECTOR(CTPPSDiamondSensitiveDetector);
+typedef TotemSD CTPPSUFSDSensitiveDetector;
+DEFINE_SENSITIVEDETECTOR(CTPPSUFSDSensitiveDetector);
 typedef ZdcSD ZdcSensitiveDetector;
 DEFINE_SENSITIVEDETECTOR(ZdcSensitiveDetector);
 typedef BscSD BSCSensitiveDetector;
@@ -42,3 +49,4 @@ DEFINE_SIMWATCHER (DoCastorAnalysis);
 DEFINE_SIMWATCHER (TotemTestGem);
 DEFINE_SIMWATCHER (BscTest);
 DEFINE_SIMWATCHER (SimG4FluxProducer);
+DEFINE_SIMWATCHER(TotemRP);

@@ -212,51 +212,51 @@ HLTEgammaGenericQuadraticEtaFilter::hltFilter(edm::Event& iEvent, const edm::Eve
 
     if ( lessThan_ ) {
       if (std::abs(EtaSC) < etaBoundaryEB12_) {
-          if ( vali <= cutRegularEB1_ + energy*cutOverEEB1_ + energy*energy*cutOverE2EB1_) {
-	     n++;
-	     filterproduct.addObject(trigger_type, ref);
-	     continue;
-          }
+        if ( vali <= cutRegularEB1_ + energy*cutOverEEB1_ + energy*energy*cutOverE2EB1_) {
+          n++;
+          filterproduct.addObject(trigger_type, ref);
+          continue;
+        }
       } else if (std::abs(EtaSC) < 1.479) {
-          if ( vali <= cutRegularEB2_ + energy*cutOverEEB2_ + energy*energy*cutOverE2EB2_) {
-	     n++;
-	     filterproduct.addObject(trigger_type, ref);
-	     continue;
-          }
+        if ( vali <= cutRegularEB2_ + energy*cutOverEEB2_ + energy*energy*cutOverE2EB2_) {
+          n++;
+          filterproduct.addObject(trigger_type, ref);
+          continue;
+        }
       } else if (std::abs(EtaSC) < etaBoundaryEE12_) {
-          if ( vali <= cutRegularEE1_ + energy*cutOverEEE1_ + energy*energy*cutOverE2EE1_) {
-	    n++;
-	    filterproduct.addObject(trigger_type, ref);
-	    continue;
-          }
+        if ( vali <= cutRegularEE1_ + energy*cutOverEEE1_ + energy*energy*cutOverE2EE1_) {
+          n++;
+          filterproduct.addObject(trigger_type, ref);
+          continue;
+        }
       } else if (vali <= cutRegularEE2_ + energy*cutOverEEE2_ + energy*energy*cutOverE2EE2_) {
-	  n++;
-	  filterproduct.addObject(trigger_type, ref);
-	  continue;
+        n++;
+        filterproduct.addObject(trigger_type, ref);
+        continue;
       }
     } else {
       if (std::abs(EtaSC) < etaBoundaryEB12_) {
-          if ( vali >= cutRegularEB1_ + energy*cutOverEEB1_ + energy*energy*cutOverE2EB1_) {
-	     n++;
-	     filterproduct.addObject(trigger_type, ref);
-	     continue;
-          }
+        if ( vali >= cutRegularEB1_ + energy*cutOverEEB1_ + energy*energy*cutOverE2EB1_) {
+          n++;
+          filterproduct.addObject(trigger_type, ref);
+          continue;
+        }
       } else if (std::abs(EtaSC) < 1.479) {
-          if ( vali >= cutRegularEB2_ + energy*cutOverEEB2_ + energy*energy*cutOverE2EB2_) {
-	     n++;
-	     filterproduct.addObject(trigger_type, ref);
-	     continue;
-          }
+        if ( vali >= cutRegularEB2_ + energy*cutOverEEB2_ + energy*energy*cutOverE2EB2_) {
+          n++;
+          filterproduct.addObject(trigger_type, ref);
+          continue;
+        }
       } else if (std::abs(EtaSC) < etaBoundaryEE12_) {
-          if ( vali >= cutRegularEE1_ + energy*cutOverEEE1_ + energy*energy*cutOverE2EE1_) {
-	    n++;
-	    filterproduct.addObject(trigger_type, ref);
-	    continue;
-          }
+        if ( vali >= cutRegularEE1_ + energy*cutOverEEE1_ + energy*energy*cutOverE2EE1_) {
+          n++;
+          filterproduct.addObject(trigger_type, ref);
+          continue;
+        }
       } else if (vali >= cutRegularEE2_ + energy*cutOverEEE2_ + energy*energy*cutOverE2EE2_) {
-	  n++;
-	  filterproduct.addObject(trigger_type, ref);
-	  continue;
+        n++;
+        filterproduct.addObject(trigger_type, ref);
+        continue;
       }
     }
   }
@@ -266,4 +266,3 @@ HLTEgammaGenericQuadraticEtaFilter::hltFilter(edm::Event& iEvent, const edm::Eve
 
   return accept;
 }
-

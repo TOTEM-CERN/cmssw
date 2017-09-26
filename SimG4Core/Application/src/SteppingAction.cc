@@ -19,7 +19,7 @@ SteppingAction::SteppingAction(EventAction* e, const edm::ParameterSet & p,
   : eventAction_(e), tracker(nullptr), calo(nullptr), steppingVerbose(sv),
     initialized(false), killBeamPipe(false),hasWatcher(hasW)
 {
-  theCriticalEnergyForVacuum = 
+  theCriticalEnergyForVacuum =
     (p.getParameter<double>("CriticalEnergyForVacuum")*CLHEP::MeV);
   if(0.0 < theCriticalEnergyForVacuum) { killBeamPipe = true; } 
   theCriticalDensity = 
