@@ -254,7 +254,6 @@ process.g4SimHits.StackingAction.SaveFirstLevelSecondary = cms.untracked.bool(Tr
 process.g4SimHits.Totem_RP_SD = cms.PSet(  # HINT: TOTEM specific
     Verbosity=cms.int32(0)
 )
-process.g4SimHits.CastorSD.nonCompensationFactor = cms.double(0.85)
 process.g4SimHits.PPS_Timing_SD = cms.PSet(
     Verbosity = cms.int32(0)
 )
