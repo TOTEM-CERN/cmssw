@@ -54,7 +54,44 @@ process.SmearingGenerator = cms.EDProducer("GaussEvtVtxEnergyGenerator",
 )
 
 # declare optics parameters
-process.load("Configuration.TotemOpticsConfiguration.OpticsConfig_6500GeV_0p4_185urad_cfi")
+#process.load("Configuration.TotemOpticsConfiguration.OpticsConfig_6500GeV_0p8_145urad_cfi")
+process.BeamOpticsParamsESSource = cms.ESSource("BeamOpticsParamsESSource",
+    BeamEnergy = cms.double(6500.0), # Gev
+    ProtonMass = cms.double(0.938272029), # Gev
+    LightSpeed = cms.double(300000000.0),
+    NormalizedEmittanceX = cms.double(3.75e-06),
+    NormalizedEmittanceY = cms.double(3.75e-06),
+    BetaStarX = cms.double(0.4), # m
+    BetaStarY = cms.double(0.4), # m
+    CrossingAngleX = cms.double(185e-6),
+    CrossingAngleY = cms.double(0.0),
+    BeamDisplacementX = cms.double(0.0), # m
+    BeamDisplacementY = cms.double(0.0), # m
+    BeamDisplacementZ = cms.double(0.0), # m
+    BunchSizeZ = cms.double(0.07), # m
+    MeanXi = cms.double(0.0), # energy smearing
+    SigmaXi = cms.double(0.0001)
+)
+
+process.ProtonTransportFunctionsESSource = cms.ESProducer("ProtonTransportFunctionsESSource",
+    opticsFile = cms.string(''), # automatic
+    maySymmetrize = cms.bool(True), # this optic is assymmetric
+    verbosity = cms.untracked.uint32(0)
+)
+
+BeamProtTransportSetup = cms.PSet(
+    Verbosity = cms.bool(False),
+    ModelRootFile = cms.string('Geometry/VeryForwardProtonTransport/data/parametrization_6500GeV_0p4_185_reco_beam1.root'),
+    Model_IP_150_R_Name = cms.string('ip5_to_beg_150_station_lhcb1'),
+    Model_IP_150_L_Name = cms.string('ip5_to_beg_150_station_lhcb1'),
+
+    # in m, should be consistent with geometry xml definitions
+    Model_IP_150_R_Zmin = cms.double(0.0),
+    Model_IP_150_R_Zmax = cms.double(202.769),
+    Model_IP_150_L_Zmax = cms.double(-202.769),
+    Model_IP_150_L_Zmin = cms.double(0.0),
+)
+
 
 # ################## STEP 3 process.g4SimHits
 #
@@ -162,7 +199,7 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 # # SimG4Core/Application/python/g4SimHits_cfi.py
 
 process.load("SimG4Core.Application.g4SimHits_cfi")
-process.g4SimHits.Physics.BeamProtTransportSetup = process.BeamProtTransportSetup
+process.g4SimHits.Physics.BeamProtTransportSetup = BeamProtTransportSetup
 #process.g4SimHits.Generator.HepMCProductLabel = 'generator'    # The input source for G4 module is connected to "process.source".
 process.g4SimHits.G4TrackingManagerVerbosity = cms.untracked.int32(0)
 process.g4SimHits.OverrideUserStackingAction = cms.bool(True)   # HINT: TOTEM specific
@@ -329,6 +366,8 @@ from SimGeneral.MixingModule.hcalDigitizer_cfi import *
 from SimGeneral.MixingModule.castorDigitizer_cfi import *
 from SimGeneral.MixingModule.trackingTruthProducer_cfi import *
 
+# here it starts
+# process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 process.mix = cms.EDProducer("MixingModule",
    moduleLabel = cms.untracked.string("mix"),
     digitizers = cms.PSet(),
@@ -360,6 +399,7 @@ process.mix = cms.EDProducer("MixingModule",
         )
     )
 )
+# here it ends
 
 
 #from SimGeneral/MixingModule/python/mix_Objects_cfi.py
