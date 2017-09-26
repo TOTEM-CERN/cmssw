@@ -358,14 +358,7 @@ process.VolumeBasedMagneticFieldESProducer = cms.ESProducer("VolumeBasedMagnetic
 # ################## STEP 4 mix pdt_cfi
 #
 from SimGeneral.MixingModule.mixObjects_cfi import *
-from SimGeneral.MixingModule.pixelDigitizer_cfi import *
-from SimGeneral.MixingModule.stripDigitizer_cfi import *
-from SimGeneral.MixingModule.ecalDigitizer_cfi import *
-from SimGeneral.MixingModule.hcalDigitizer_cfi import *
-from SimGeneral.MixingModule.castorDigitizer_cfi import *
-from SimGeneral.MixingModule.trackingTruthProducer_cfi import *
 
-# here it starts
 # process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 process.mix = cms.EDProducer("MixingModule",
    moduleLabel = cms.untracked.string("mix"),
@@ -398,7 +391,6 @@ process.mix = cms.EDProducer("MixingModule",
         )
     )
 )
-# here it ends
 
 
 #from SimGeneral/MixingModule/python/mix_Objects_cfi.py
