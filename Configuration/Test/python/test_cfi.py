@@ -227,24 +227,3 @@ mix = cms.EDProducer("MixingModule",
                                  )
                              )
                              )
-
-
-#from SimGeneral/MixingModule/python/mix_Objects_cfi.py
-mix.mixObjects.mixSH.input =  cms.VInputTag(  # note that this list needs to be in the same order as the subdets
-    cms.InputTag("g4SimHits","TotemHitsRP"),
-    cms.InputTag("g4SimHits","CTPPSHitsDiamond"),
-    cms.InputTag("g4SimHits","CTPPSHitsUFSD"),
-    cms.InputTag("g4SimHits","CTPPSHitsPixel"))
-
-mix.mixObjects.mixSH.subdets = cms.vstring(
-    'TotemHitsRP',
-    'CTPPSHitsDiamond',
-    'CTPPSHitsUFSD',
-    'CTPPSHitsPixel'
-)
-
-mix.mixObjects.mixSH.crossingFrames = cms.untracked.vstring('TotemHitsRP',
-                                                            'CTPPSHitsDiamond',
-                                                            'CTPPSHitsUFSD',
-                                                            'CTPPSHitsPixel'
-                                                            )
