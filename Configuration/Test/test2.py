@@ -1,46 +1,24 @@
 from SimG4Core.Application.hectorParameter_cfi import *
 import FWCore.ParameterSet.Config as cms
+import copy
+
+# Summer 2017 Maciej Kocot
+# Used for simulation of strips, pixels and timing (diamond+UFSD)
 
 process = cms.Process("TestFlatGun")
 
-'''process.MessageLogger = cms.Service("MessageLogger",
-                                    destinations = cms.untracked.vstring('warnings',
-                                                                         'errors',
-                                                                         'infos',
-                                                                         'debugs'),
-                                    categories = cms.untracked.vstring('ForwardSim',
-                                                                       'TotemRP'),
-                                    debugModules = cms.untracked.vstring('*'),
-                                    errors = cms.untracked.PSet(
-                                        threshold = cms.untracked.string('ERROR')
-                                    ),
-                                    warnings = cms.untracked.PSet(
-                                        threshold = cms.untracked.string('WARNING')
-                                    ),
-                                    infos = cms.untracked.PSet(
-                                        threshold = cms.untracked.string('INFO')
-                                    ),
-                                    debugs = cms.untracked.PSet(
-                                        threshold = cms.untracked.string('DEBUG'),
-                                        INFO = cms.untracked.PSet(
-                                            limit = cms.untracked.int32(0)
-                                        ),
-                                        DEBUG = cms.untracked.PSet(
-                                            limit = cms.untracked.int32(0)
-                                        ),
-                                        TotemRP = cms.untracked.PSet(
-                                            limit = cms.untracked.int32(1000000)
-                                        ),
-                                        ForwardSim = cms.untracked.PSet(
-                                            limit = cms.untracked.int32(1000000)
-                                        )
-                                    )
-                                    )'''
-
 # Specify the maximum events to simulate
-maxEvents = cms.untracked.PSet(
+process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(50)
 )
+
+# Configure the output module (save the result in a file)
+o1 = cms.OutputModule("PoolOutputModule",
+                      outputCommands = cms.untracked.vstring('keep *'),
+                      fileName = cms.untracked.string('file:test.root')
+                      )
+process.outpath = cms.EndPath(o1)
+
 
 process.load("Configuration.StandardSequences.Services_cff")
 process.load("Configuration.Generator.FlatLogKsiLogT_pp_13TeV_cfi")
@@ -61,6 +39,10 @@ process.BeamProtTransportSetup = cms.PSet(
     Model_IP_150_L_Zmax = cms.double(-202.769),
     Model_IP_150_L_Zmin = cms.double(0.0),
 )
+
+# Generate a GDML file for geometry visualisation (for example using SWAN)
+# Set process.maxEvents to 1 in order to make the running time short.
+# process.g4SimHits.FileNameGDML = cms.untracked.string('geometry.gdml')
 
 process.g4SimHits.Physics.BeamProtTransportSetup = process.BeamProtTransportSetup
 process.g4SimHits.G4TrackingManagerVerbosity = cms.untracked.int32(0)
@@ -110,18 +92,34 @@ process.g4SimHits.PPSSD = cms.PSet(
     Verbosity = cms.untracked.int32(0)
 )
 
-
+# Use particle table
 process.load("SimGeneral.HepPDTESSource.pdt_cfi")
 process.load("SimTotem.RPDigiProducer.RPSiDetConf_cfi")
 
 process.load("RecoCTPPS.Configuration.recoCTPPS_cff")
 process.totemRPClusterProducer.tagDigi = cms.InputTag("RPSiDetDigitizer")
 
+process.load("Geometry.VeryForwardGeometry.geometryRP_cfi")
 process.load("Configuration.Test.test_cfi")
 process.prefer("magfield")
 
+ctppsUFSDGeomXMLFiles = cms.vstring(
+    'Geometry/VeryForwardData/data/CTPPS_UFSD_Segments/CTPPS_UFSD_Pattern1.xml',
+    'Geometry/VeryForwardData/data/CTPPS_UFSD_Segments/CTPPS_UFSD_Pattern2_SegmentA.xml',
+    'Geometry/VeryForwardData/data/CTPPS_UFSD_Segments/CTPPS_UFSD_Pattern2_SegmentB.xml',
+    'Geometry/VeryForwardData/data/CTPPS_UFSD_Planes/CTPPS_UFSD_Plane4.xml',
+    'Geometry/VeryForwardData/data/CTPPS_UFSD_Parameters.xml',
+    'Geometry/VeryForwardData/data/CTPPS_UFSD_Sensitive_Dets.xml',
+)
 
-#
+process.XMLIdealGeometryESSource = copy.deepcopy(process.XMLIdealGeometryESSource_CTPPS)
+process.XMLIdealGeometryESSource.geomXMLFiles += ctppsUFSDGeomXMLFiles
+
+# position of RPs
+process.XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/data/CTPPS_Diamond_X_Distance.xml")
+process.XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/data/2017_07_08_fill5912/RP_Dist_Beam_Cent.xml")
+
+
 process.p1 = cms.Path(
     process.generator
     *process.SmearingGenerator
