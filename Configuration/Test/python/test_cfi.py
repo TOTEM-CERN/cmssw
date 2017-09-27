@@ -4,42 +4,6 @@ import FWCore.ParameterSet.Config as cms
 # Summer 2017 Maciej Kocot & Patryk Lawski
 # Base config used for simulation
 
-'''
-MessageLogger = cms.Service("MessageLogger",
-                            destinations = cms.untracked.vstring('warnings',
-                                                                 'errors',
-                                                                 'infos',
-                                                                 'debugs'),
-                            categories = cms.untracked.vstring('ForwardSim',
-                                                               'TotemRP'),
-                            debugModules = cms.untracked.vstring('*'),
-                            errors = cms.untracked.PSet(
-                                threshold = cms.untracked.string('ERROR')
-                            ),
-                            warnings = cms.untracked.PSet(
-                                threshold = cms.untracked.string('WARNING')
-                            ),
-                            infos = cms.untracked.PSet(
-                                threshold = cms.untracked.string('INFO')
-                            ),
-                            debugs = cms.untracked.PSet(
-                                threshold = cms.untracked.string('DEBUG'),
-                                INFO = cms.untracked.PSet(
-                                    limit = cms.untracked.int32(0)
-                                ),
-                                DEBUG = cms.untracked.PSet(
-                                    limit = cms.untracked.int32(0)
-                                ),
-                                TotemRP = cms.untracked.PSet(
-                                    limit = cms.untracked.int32(1000000)
-                                ),
-                                ForwardSim = cms.untracked.PSet(
-                                    limit = cms.untracked.int32(1000000)
-                                )
-                            )
-                            )
-                            '''
-
 ################## STEP 1 - generator
 source = cms.Source("EmptySource")
 
@@ -52,8 +16,6 @@ RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
                                                    sourceSeed = cms.PSet(initialSeed =cms.untracked.uint32(98765)),
                                                    generator = cms.PSet(initialSeed = cms.untracked.uint32(98766)),
                                                    SmearingGenerator = cms.PSet(initialSeed =cms.untracked.uint32(3849)),
-                                                   # T2Digis = cms.PSet(initialSeed =cms.untracked.uint32(98765)),
-                                                   # T2MCl = cms.PSet(initialSeed =cms.untracked.uint32(24141)),
                                                    RPFastStationSimulation = cms.PSet(initialSeed =cms.untracked.uint32(12)),
                                                    RPFastFullSimulation = cms.PSet(initialSeed =cms.untracked.uint32(13)),
                                                    mix = cms.PSet(initialSeed = cms.untracked.uint32(24141)),

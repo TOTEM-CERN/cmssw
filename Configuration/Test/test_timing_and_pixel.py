@@ -9,7 +9,7 @@ process = cms.Process("TestFlatGun")
 
 # Specify the maximum events to simulate
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(10)
 )
 
 # Configure the output module (save the result in a file)
@@ -91,7 +91,6 @@ process.g4SimHits.PPSSD = cms.PSet(
     Verbosity = cms.untracked.int32(0)
 )
 
-# Use particle table
 process.load("SimGeneral.HepPDTESSource.pdt_cfi")
 process.load("SimTotem.RPDigiProducer.RPSiDetConf_cfi")
 
