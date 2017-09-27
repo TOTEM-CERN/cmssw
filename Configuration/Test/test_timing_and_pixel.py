@@ -9,7 +9,7 @@ process = cms.Process("TestFlatGun")
 
 # Specify the maximum events to simulate
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(50)
+    input = cms.untracked.int32(100)
 )
 
 # Configure the output module (save the result in a file)
@@ -82,7 +82,6 @@ process.g4SimHits.StackingAction.SaveFirstLevelSecondary = cms.untracked.bool(Tr
 process.g4SimHits.Totem_RP_SD = cms.PSet(  # HINT: TOTEM specific
     Verbosity=cms.int32(0)
 )
-process.g4SimHits.CastorSD.nonCompensationFactor = cms.double(0.85)
 process.g4SimHits.PPS_Timing_SD = cms.PSet(
     Verbosity = cms.int32(0)
 )
@@ -114,9 +113,10 @@ ctppsUFSDGeomXMLFiles = cms.vstring(
 
 process.XMLIdealGeometryESSource = copy.deepcopy(process.XMLIdealGeometryESSource_CTPPS)
 process.XMLIdealGeometryESSource.geomXMLFiles += ctppsUFSDGeomXMLFiles
+process.XMLIdealGeometryESSource.geomXMLFiles.remove('Geometry/VeryForwardData/data/CTPPS_Diamond_Planes/CTPPS_Diamond_Plane4.xml')
+process.XMLIdealGeometryESSource.geomXMLFiles.append('Geometry/VeryForwardData/data/CTPPS_Diamond_Sensitive_Dets.xml')
 
 # position of RPs
-process.XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/data/CTPPS_Diamond_X_Distance.xml")
 process.XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/data/2017_07_08_fill5912/RP_Dist_Beam_Cent.xml")
 
 

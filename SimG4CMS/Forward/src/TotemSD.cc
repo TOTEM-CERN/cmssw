@@ -261,12 +261,8 @@ void TotemSD::GetStepInfo(G4Step* aStep)
   exitPoint = postStepPoint->GetPosition();
   currentPV = preStepPoint->GetPhysicalVolume();
 
-  // WARNING: changed temporarily to global coordinates to facilitate validation.
-  // This might brak the reconstruction!
-//  theLocalEntryPoint = SetToLocal(hitPoint);
-//  theLocalExitPoint = SetToLocal(exitPoint);
-  theLocalEntryPoint = (hitPoint);
-  theLocalExitPoint = (exitPoint);
+  theLocalEntryPoint = SetToLocal(hitPoint);
+  theLocalExitPoint = SetToLocal(exitPoint);
 
   G4String name = currentPV->GetName();
   name.assign(name,0,4);
