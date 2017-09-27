@@ -1,64 +1,17 @@
 from SimG4Core.Application.hectorParameter_cfi import *
 import FWCore.ParameterSet.Config as cms
-import copy
-process = cms.Process("TestFlatGun")
-'''process.MessageLogger = cms.Service("MessageLogger",
-                                    destinations = cms.untracked.vstring('warnings',
-                                                                         'errors',
-                                                                         'infos',
-                                                                         'debugs'),
-                                    categories = cms.untracked.vstring('ForwardSim',
-                                                                       'TotemRP'),
-                                    debugModules = cms.untracked.vstring('*'),
-                                    errors = cms.untracked.PSet(
-                                        threshold = cms.untracked.string('ERROR')
-                                    ),
-                                    warnings = cms.untracked.PSet(
-                                        threshold = cms.untracked.string('WARNING')
-                                    ),
-                                    infos = cms.untracked.PSet(
-                                        threshold = cms.untracked.string('INFO')
-                                    ),
-                                    debugs = cms.untracked.PSet(
-                                        threshold = cms.untracked.string('DEBUG'),
-                                        INFO = cms.untracked.PSet(
-                                            limit = cms.untracked.int32(0)
-                                        ),
-                                        DEBUG = cms.untracked.PSet(
-                                            limit = cms.untracked.int32(0)
-                                        ),
-                                        TotemRP = cms.untracked.PSet(
-                                            limit = cms.untracked.int32(1000000)
-                                        ),
-                                        ForwardSim = cms.untracked.PSet(
-                                            limit = cms.untracked.int32(1000000)
-                                        )
-                                    )
-                                    )'''
-
-# Specify the maximum events to simulate
-process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(1)
-)
 
 # Configure the output module (save the result in a file)
-process.o1 = cms.OutputModule("PoolOutputModule",
+o1 = cms.OutputModule("PoolOutputModule",
                               outputCommands = cms.untracked.vstring('keep *'),
                               fileName = cms.untracked.string('file:test.root')
                               )
-process.outpath = cms.EndPath(process.o1)
+outpath = cms.EndPath(o1)
 
-################## STEP 1 - process.generator
-process.source = cms.Source("EmptySource")
+################## STEP 1 - generator
+source = cms.Source("EmptySource")
 
-# Use random number generator service
-#process.load("Configuration.TotemCommon.RandomNumbers_cfi")
-
-# particle generator paramteres
-process.load("Configuration.StandardSequences.Services_cff")
-
-process.load("Configuration.Generator.FlatLogKsiLogT_pp_13TeV_cfi")
-process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
+RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
                                                    g4SimHits = cms.PSet(initialSeed = cms.untracked.uint32(9876)),
                                                    SimG4Object = cms.PSet(initialSeed =cms.untracked.uint32(9876)),
                                                    RPSiDetDigitizer = cms.PSet(initialSeed =cms.untracked.uint32(137137)),
@@ -76,8 +29,8 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
                                                                            )
 
                                                    )
-################# STEP 2 process.SmearingGenerator
-process.SmearingGenerator = cms.EDProducer("GaussEvtVtxEnergyGenerator",
+################# STEP 2 SmearingGenerator
+SmearingGenerator = cms.EDProducer("GaussEvtVtxEnergyGenerator",
                                            src   = cms.InputTag("generator"),
                                            MeanX = cms.double(0.0),
                                            MeanY = cms.double(0.0),
@@ -88,8 +41,7 @@ process.SmearingGenerator = cms.EDProducer("GaussEvtVtxEnergyGenerator",
                                            TimeOffset = cms.double(0.0)
                                            )
 # declare optics parameters
-#process.load("Configuration.TotemOpticsConfiguration.OpticsConfig_6500GeV_0p8_145urad_cfi")
-process.BeamOpticsParamsESSource = cms.ESSource("BeamOpticsParamsESSource",
+BeamOpticsParamsESSource = cms.ESSource("BeamOpticsParamsESSource",
                                                 BeamEnergy = cms.double(6500.0), # Gev
                                                 ProtonMass = cms.double(0.938272029), # Gev
                                                 LightSpeed = cms.double(300000000.0),
@@ -107,33 +59,14 @@ process.BeamOpticsParamsESSource = cms.ESSource("BeamOpticsParamsESSource",
                                                 SigmaXi = cms.double(0.0001)
                                                 )
 
-process.ProtonTransportFunctionsESSource = cms.ESProducer("ProtonTransportFunctionsESSource",
+ProtonTransportFunctionsESSource = cms.ESProducer("ProtonTransportFunctionsESSource",
                                                           opticsFile = cms.string(''), # automatic
                                                           maySymmetrize = cms.bool(True), # this optic is assymmetric
                                                           verbosity = cms.untracked.uint32(0)
                                                           )
 
-BeamProtTransportSetup = cms.PSet(
-    Verbosity = cms.bool(False),
-    ModelRootFile = cms.string('Geometry/VeryForwardProtonTransport/data/parametrization_6500GeV_0p4_185_reco_beam1.root'),
-    # ModelRootFile = cms.string('Geometry/VeryForwardProtonTransport/data/parametrization_6500GeV_90_transp_75.root'),
-    Model_IP_150_R_Name = cms.string('ip5_to_beg_150_station_lhcb1'),
-    Model_IP_150_L_Name = cms.string('ip5_to_beg_150_station_lhcb1'),
+# g4sh
 
-    # in m, should be consistent with geometry xml definitions
-    Model_IP_150_R_Zmin = cms.double(0.0),
-    Model_IP_150_R_Zmax = cms.double(202.769),
-    Model_IP_150_L_Zmax = cms.double(-202.769),
-    Model_IP_150_L_Zmin = cms.double(0.0),
-)
-
-
-# ################## STEP 3 process.g4SimHits
-#
-# # Geometry - beta* specific
-# process.load("Geometry.VeryForwardGeometry.geometryRP_cfi")
-
-# DDL geometry (ideal)
 totemGeomXMLFiles = cms.vstring(
     'Geometry/CMSCommonData/data/materials.xml',
     'Geometry/CMSCommonData/data/rotations.xml',
@@ -266,113 +199,23 @@ ctppsPixelGeomXMLFiles = cms.vstring(
     'Geometry/VeryForwardData/data/CTPPS_Pixel_Sens.xml'
 )
 
-process.XMLIdealGeometryESSource = cms.ESSource("XMLIdealGeometryESSource",
+XMLIdealGeometryESSource = cms.ESSource("XMLIdealGeometryESSource",
                                                 geomXMLFiles = totemGeomXMLFiles+ctppsDiamondGeomXMLFiles+ctppsUFSDGeomXMLFiles+ctppsPixelGeomXMLFiles,
                                                 rootNodeName = cms.string('cms:CMSE')
                                                 )
 
 # position of RPs
-process.XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/data/CTPPS_Diamond_X_Distance.xml")
-process.XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/data/2017_07_08_fill5912/RP_Dist_Beam_Cent.xml")
+XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/data/CTPPS_Diamond_X_Distance.xml")
+XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/data/2017_07_08_fill5912/RP_Dist_Beam_Cent.xml")
 
 # extended geometries
-process.ctppsGeometryESModule = cms.ESProducer("CTPPSGeometryESModule",
+ctppsGeometryESModule = cms.ESProducer("CTPPSGeometryESModule",
                                                  verbosity = cms.untracked.uint32(1),
                                                compactViewTag = cms.string('XMLIdealGeometryESSource_CTPPS')
                                                  )
 
 
-#
-# # TODO Change to the LowBetaSettings
-# process.XMLIdealGeometryESSource_CTPPS.geomXMLFiles.append('Geometry/VeryForwardData/data/RP_Dist_Beam_Low_Betha/RP_Dist_Beam_Cent.xml')
-#
-# # misalignments
-# # https://github.com/cms-sw/cmssw/blob/d40b17c22838d14956c0399f357148f05ecdb369/Geometry/VeryForwardGeometryBuilder/python/TotemRPIncludeAlignments_cfi.py
-#process.load("Geometry.VeryForwardGeometryBuilder.TotemRPIncludeAlignments_cfi")
-#process.TotemRPIncludeAlignments.MisalignedFiles = cms.vstring()
-#process.TotemRPIncludeAlignments.RealFiles = cms.vstring(
-#'Alignment/RPData/LHC/2015_10_18_fill4511/version2/sr/45.xml',
-#'Alignment/RPData/LHC/2015_10_18_fill4511/version2/sr/56.xml'
-#)
-# # Magnetic Field, by default we have 3.8T
-process.load("Configuration.StandardSequences.MagneticField_cff")
-#
-# # G4 simulation & proton transport
-# # SimG4Core/Application/python/g4SimHits_cfi.py
-
-process.load("SimG4Core.Application.g4SimHits_cfi")
-# process.g4SimHits.FileNameGDML = cms.untracked.string('totem_geom_diam4.gdml')
-process.g4SimHits.Physics.BeamProtTransportSetup = BeamProtTransportSetup
-#process.g4SimHits.Generator.HepMCProductLabel = 'generator'    # The input source for G4 module is connected to "process.source".
-process.g4SimHits.G4TrackingManagerVerbosity = cms.untracked.int32(0)
-process.g4SimHits.OverrideUserStackingAction = cms.bool(True)   # HINT: TOTEM specific
-process.g4SimHits.TransportParticlesThroughWholeBeampipe = cms.bool(True)
-# TOTEM uses MeasuredGeometryRecord instead of IdealGeometryRecord
-process.g4SimHits.UseMeasuredGeometryRecord = cms.untracked.bool(False)  # HINT: TOTEM specific
-process.g4SimHits.SteppingVerbosity = cms.int32(5)
-process.g4SimHits.G4EventManagerVerbosity = cms.untracked.int32(0)
-process.g4SimHits.G4StackManagerVerbosity = cms.untracked.int32(0)
-process.g4SimHits.Watchers = cms.VPSet(
-    #        cms.PSet( # HINT: TOTEM specific
-    #            type = cms.string('SimTracer'),
-    #            SimTracer = cms.PSet(verbose = cms.bool(True)),
-    #        ),
-    #       cms.PSet( # HINT: TOTEM specific
-    #           type = cms.string('TotemRP'),
-    #           TotemRP = cms.PSet(
-    #               Names = cms.vstring('TotemHitsRP'),
-    #               FileName = cms.string('TotemTestRP_Hits.root'),
-    #               RPDebugFileName = cms.string('TotemDebugRP.root'),
-    #               FileNameOLD = cms.string('TotemTestRP_Hits_Old.root'),
-    #               Verbosity = cms.bool(True)
-    #           )
-    #       )
-)
-process.g4SimHits.HepMCProductLabel = cms.InputTag("generator")
-process.g4SimHits.Physics.DefaultCutValue = cms.double(100.0)
-process.g4SimHits.Generator = cms.PSet(
-    HectorEtaCut,
-    HepMCProductLabel=cms.string('SmearingGenerator'),
-    ApplyPCuts=cms.bool(False),
-    ApplyPtransCut=cms.bool(False),
-    MinPCut=cms.double(0.04),  ## the cut is in GeV
-    MaxPCut=cms.double(99999.0),  ## the pmax=99.TeV
-    ApplyEtaCuts=cms.bool(False),
-    MinEtaCut=cms.double(-5.5),
-    MaxEtaCut=cms.double(5.5),
-    RDecLenCut=cms.double(2.9),  ## (cm) the cut on vertex radius
-    LDecLenCut=cms.double(30.0),  ## (cm) decay volume length
-    ApplyPhiCuts=cms.bool(False),
-    MinPhiCut=cms.double(-3.14159265359),  ## (radians)
-    MaxPhiCut=cms.double(3.14159265359),  ## according to CMS conventions
-    ApplyLumiMonitorCuts=cms.bool(False),  ## primary for lumi monitors
-    Verbosity=cms.untracked.int32(0),
-    LeaveScatteredProtons=cms.untracked.bool(True),
-    ## HINT: TOTEM specific - Leave intact protons after scattering for further near beam transport
-    LeaveOnlyScatteredProtons=cms.untracked.bool(False)
-    ## HINT: TOTEM specific - Leave only intact protons and reject all the other particles
-)
-
-process.g4SimHits.StackingAction.SaveFirstLevelSecondary = cms.untracked.bool(True)
-process.g4SimHits.Totem_RP_SD = cms.PSet(  # HINT: TOTEM specific
-    Verbosity=cms.int32(0)
-)
-process.g4SimHits.CastorSD.nonCompensationFactor = cms.double(0.85)
-process.g4SimHits.PPS_Timing_SD = cms.PSet(
-    Verbosity = cms.int32(0)
-)
-#
-# # Use particle table
-process.load("SimGeneral.HepPDTESSource.pdt_cfi")
-#
-process.g4SimHits.PPSSD = cms.PSet(
-    Verbosity = cms.untracked.int32(0)
-)
-#
-# ################## Step 3 - Magnetic field configuration
-# # todo declare in standard way (not as hardcoded raw config)
-#
-process.magfield = cms.ESSource("XMLIdealGeometryESSource",
+magfield = cms.ESSource("XMLIdealGeometryESSource",
                                 geomXMLFiles = cms.vstring('Geometry/CMSCommonData/data/normal/cmsextent.xml',
                                                            'Geometry/CMSCommonData/data/cms.xml',
                                                            'Geometry/CMSCommonData/data/cmsMagneticField.xml',
@@ -380,9 +223,7 @@ process.magfield = cms.ESSource("XMLIdealGeometryESSource",
                                                            'Geometry/CMSCommonData/data/materials.xml'),
                                 rootNodeName = cms.string('cmsMagneticField:MAGF')
                                 )
-process.prefer("magfield")
-
-process.ParametrizedMagneticFieldProducer = cms.ESProducer("ParametrizedMagneticFieldProducer",
+ParametrizedMagneticFieldProducer = cms.ESProducer("ParametrizedMagneticFieldProducer",
                                                            version = cms.string('OAE_1103l_071212'),
                                                            parameters = cms.PSet(
                                                                BValue = cms.string('3_8T')
@@ -390,7 +231,7 @@ process.ParametrizedMagneticFieldProducer = cms.ESProducer("ParametrizedMagnetic
                                                            label = cms.untracked.string('parametrizedField')
                                                            )
 
-process.VolumeBasedMagneticFieldESProducer = cms.ESProducer("VolumeBasedMagneticFieldESProducer",
+VolumeBasedMagneticFieldESProducer = cms.ESProducer("VolumeBasedMagneticFieldESProducer",
                                                             scalingVolumes = cms.vint32(14100, 14200, 17600, 17800, 17900,
                                                                                         18100, 18300, 18400, 18600, 23100,
                                                                                         23300, 23400, 23600, 23800, 23900,
@@ -464,7 +305,7 @@ from SimGeneral.MixingModule.hcalDigitizer_cfi import *
 from SimGeneral.MixingModule.castorDigitizer_cfi import *
 from SimGeneral.MixingModule.trackingTruthProducer_cfi import *
 
-process.mix = cms.EDProducer("MixingModule",
+mix = cms.EDProducer("MixingModule",
                              moduleLabel = cms.untracked.string("mix"),
                              digitizers = cms.PSet(
                                  #     pixel = cms.PSet(
@@ -520,72 +361,21 @@ process.mix = cms.EDProducer("MixingModule",
 
 
 #from SimGeneral/MixingModule/python/mix_Objects_cfi.py
-process.mix.mixObjects.mixSH.input =  cms.VInputTag(  # note that this list needs to be in the same order as the subdets
+mix.mixObjects.mixSH.input =  cms.VInputTag(  # note that this list needs to be in the same order as the subdets
     cms.InputTag("g4SimHits","TotemHitsRP"),
     cms.InputTag("g4SimHits","CTPPSHitsDiamond"),
     cms.InputTag("g4SimHits","CTPPSHitsUFSD"),
     cms.InputTag("g4SimHits","CTPPSHitsPixel"))
 
-process.mix.mixObjects.mixSH.subdets = cms.vstring(
+mix.mixObjects.mixSH.subdets = cms.vstring(
     'TotemHitsRP',
     'CTPPSHitsDiamond',
     'CTPPSHitsUFSD',
     'CTPPSHitsPixel'
 )
 
-process.mix.mixObjects.mixSH.crossingFrames = cms.untracked.vstring('TotemHitsRP',
+mix.mixObjects.mixSH.crossingFrames = cms.untracked.vstring('TotemHitsRP',
                                                                     'CTPPSHitsDiamond',
                                                                     'CTPPSHitsUFSD',
                                                                     'CTPPSHitsPixel'
                                                                     )
-
-
-# Use particle table
-process.load("SimGeneral.HepPDTESSource.pdt_cfi")
-
-
-################## STEP 5 RPDigiProducer
-
-process.load("SimTotem.RPDigiProducer.RPSiDetConf_cfi")
-
-################### STEP 6 reco
-#
-# process.load("Configuration.TotemStandardSequences.RP_Digi_and_TrackReconstruction_cfi")
-#
-# ################## STEP 7 TotemNtuplizer
-#
-# process.load("TotemAnalysis.TotemNtuplizer.TotemNtuplizer_cfi")
-# process.TotemNtuplizer.outputFileName = "test.ntuple.root"
-# process.TotemNtuplizer.RawEventLabel = 'source'
-# process.TotemNtuplizer.RPReconstructedProtonCollectionLabel = cms.InputTag('RP220Reconst')
-# process.TotemNtuplizer.RPReconstructedProtonPairCollectionLabel = cms.InputTag('RP220Reconst')
-# process.TotemNtuplizer.RPMulFittedTrackCollectionLabel = cms.InputTag("RPMulTrackNonParallelCandCollFit")
-# process.TotemNtuplizer.includeDigi = cms.bool(True)
-# process.TotemNtuplizer.includePatterns = cms.bool(True)
-#
-# #######
-process.load("RecoCTPPS.Configuration.recoCTPPS_cff")
-process.totemRPClusterProducer.tagDigi = cms.InputTag("RPSiDetDigitizer")
-#process.dump = cms.EDAnalyzer("EventContentAnalyzer")
-
-# process.RPHitDists = cms.EDAnalyzer("GeometryInfoModule")
-
-
-
-#
-process.p1 = cms.Path(
-    process.generator
-    #*process.VtxSmeared
-    *process.SmearingGenerator
-    *process.g4SimHits
-    *process.mix
-    # *process.DiamondSiDetDigitizer
-    # *process.UFSDSiDetDigitizer
-    #*process.RPClustProd
-    #*process.RPHecoHitProd
-    # *process.RPSinglTrackCandFind
-    # *process.RPSingleTrackCandCollFit
-    #	*process.RP220Reconst
-    # *process.recoCTPPS
-    # *process.RPHitDists
-)
