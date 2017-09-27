@@ -62,11 +62,6 @@ ProtonTransportFunctionsESSource = cms.ESProducer("ProtonTransportFunctionsESSou
 # ################## STEP 3 process.g4SimHits
 # g4SimHits properties to be defined in actual config file
 
-ctppsGeometryESModule = cms.ESProducer("CTPPSGeometryESModule",
-                                                 verbosity = cms.untracked.uint32(1),
-                                               compactViewTag = cms.string('XMLIdealGeometryESSource_CTPPS')
-                                                 )
-
 # ################## Step 4 - Magnetic field configuration
 magfield = cms.ESSource("XMLIdealGeometryESSource",
                                 geomXMLFiles = cms.vstring('Geometry/CMSCommonData/data/normal/cmsextent.xml',

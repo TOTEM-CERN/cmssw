@@ -9,7 +9,7 @@ process = cms.Process("TestFlatGun")
 
 # Specify the maximum events to simulate
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(10)
+    input = cms.untracked.int32(200)
 )
 
 # Configure the output module (save the result in a file)
@@ -116,6 +116,7 @@ process.XMLIdealGeometryESSource.geomXMLFiles.remove('Geometry/VeryForwardData/d
 process.XMLIdealGeometryESSource.geomXMLFiles.append('Geometry/VeryForwardData/data/CTPPS_Diamond_Sensitive_Dets.xml')
 
 # position of RPs
+process.XMLIdealGeometryESSource.geomXMLFiles.remove("Geometry/VeryForwardData/data/2016_ctpps_15sigma_margin0/RP_Dist_Beam_Cent.xml")
 process.XMLIdealGeometryESSource.geomXMLFiles.append("Geometry/VeryForwardData/data/2017_07_08_fill5912/RP_Dist_Beam_Cent.xml")
 
 
